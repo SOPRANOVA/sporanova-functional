@@ -95,14 +95,14 @@ function slugify(value: string) {
   return base || "workspace";
 }
 
-export async function bootstrapWorkspace(user: { id: number; name?: string | null; email?: string | null }) {
+export async function bootstrapWorkspace(user: { id: number; name?: string | null; email?: string | null }, organizationNameOverride?: string | null) {
   const existing = await listWorkspacesForUser(user.id);
   if (existing.length > 0) return existing;
 
   const db = await requireDb();
   const displayName = user.name?.trim() || user.email?.split("@")[0] || "My Organization";
   const suffix = nanoid(6).toLowerCase();
-  const organizationName = `${displayName}'s Organization`;
+  const organizationName = organizationNameOverride?.trim() || `${displayName}'s Organization`;
   const organizationInsert = await db.insert(organizations).values({
     name: organizationName,
     slug: `${slugify(displayName)}-${suffix}`,
@@ -111,7 +111,7 @@ export async function bootstrapWorkspace(user: { id: number; name?: string | nul
   const organizationId = Number(organizationInsert[0].insertId);
   const workspaceInsert = await db.insert(workspaces).values({
     organizationId,
-    name: "Main workspace",
+    name: organizationName === `${displayName}'s Organization` ? "Main workspace" : `${organizationName} workspace`,
     slug: "main",
     isDefault: true,
     createdById: user.id,

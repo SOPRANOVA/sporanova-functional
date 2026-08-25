@@ -1,22 +1,36 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import Logo from "../components/Logo";
+import { trpc } from "../lib/trpc";
 
 export default function Signup() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", company: "", password: "" });
   const [focused, setFocused] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const register = trpc.auth.register.useMutation({
+    onSuccess: () => navigate("/app/dashboard", { replace: true }),
+    onError: (mutationError) => {
+      setError(mutationError.message);
+      setLoading(false);
+    },
+  });
 
   const update = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     if (step === 1) { setStep(2); return; }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    navigate("/app/dashboard");
+    register.mutate({
+      email: form.email,
+      password: form.password,
+      name: `${form.firstName} ${form.lastName}`.trim(),
+      organizationName: form.company,
+    });
   }
 
   const inputStyle = (key: string) => ({
@@ -155,6 +169,8 @@ export default function Signup() {
                 </div>
               </>
             )}
+
+            {error && <p role="alert" className="text-xs" style={{ color: "#A05B5B" }}>{error}</p>}
 
             <button
               type="submit"

@@ -1,19 +1,24 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import Logo from "../components/Logo";
+import { trpc } from "../lib/trpc";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [focused, setFocused] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const requestReset = trpc.auth.requestPasswordReset.useMutation({
+    onSuccess: () => { setSent(true); setLoading(false); },
+    onError: (mutationError) => { setError(mutationError.message); setLoading(false); },
+  });
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    setSent(true);
-    setLoading(false);
+    requestReset.mutate({ email });
   }
 
   return (
@@ -52,6 +57,8 @@ export default function ForgotPassword() {
                   }}
                 />
               </div>
+
+              {error && <p role="alert" className="text-xs" style={{ color: "#A05B5B" }}>{error}</p>}
 
               <button
                 type="submit"

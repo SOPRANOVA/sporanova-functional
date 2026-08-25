@@ -46,6 +46,19 @@ export const authSessions = mysqlTable(
   table => [index("auth_sessions_user_idx").on(table.userId), index("auth_sessions_expires_idx").on(table.expiresAt)],
 );
 
+export const passwordResetTokens = mysqlTable(
+  "password_reset_tokens",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+    tokenHash: varchar("tokenHash", { length: 128 }).notNull().unique(),
+    expiresAt: timestamp("expiresAt").notNull(),
+    usedAt: timestamp("usedAt"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  table => [index("password_reset_tokens_user_idx").on(table.userId), index("password_reset_tokens_expires_idx").on(table.expiresAt)],
+);
+
 export const oauthAccounts = mysqlTable(
   "oauth_accounts",
   {

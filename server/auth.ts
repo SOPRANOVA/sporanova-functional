@@ -1,9 +1,10 @@
-import { and, eq, gt } from "drizzle-orm";
+import { and, eq, gt, isNull } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { parse } from "cookie";
-import { authSessions, users, type User } from "../drizzle/schema";
+import { authSessions, passwordResetTokens, users, type User } from "../drizzle/schema";
 import { requireDb } from "./db";
+import { sendEmail } from "./email";
 import { ENV } from "./_core/env";
 
 export const SESSION_COOKIE = "sopranova_session";
@@ -46,6 +47,36 @@ export async function authenticateWithPassword(emailInput: string, password: str
   if (!user?.passwordHash || !(await bcrypt.compare(password, user.passwordHash))) return null;
   await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.id, user.id));
   return user;
+}
+
+export async function requestPasswordReset(emailInput: string) {
+  const db = await requireDb();
+  const email = emailInput.trim().toLowerCase();
+  const user = (await db.select().from(users).where(eq(users.email, email)).limit(1))[0];
+  if (!user?.email) return { accepted: true } as const;
+
+  const rawToken = randomBytes(32).toString("base64url");
+  const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
+  await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, user.id));
+  await db.insert(passwordResetTokens).values({ userId: user.id, tokenHash: tokenHash(rawToken), expiresAt });
+  const resetUrl = `${ENV.appUrl.replace(/\/$/, "")}/reset-password?token=${encodeURIComponent(rawToken)}`;
+  await sendEmail({
+    to: user.email,
+    subject: "Reset your SOPRANOVA password",
+    text: `Use this link to reset your password (expires in 30 minutes): ${resetUrl}`,
+  });
+  return { accepted: true } as const;
+}
+
+export async function resetPassword(rawToken: string, password: string) {
+  const db = await requireDb();
+  const token = (await db.select().from(passwordResetTokens).where(and(eq(passwordResetTokens.tokenHash, tokenHash(rawToken)), gt(passwordResetTokens.expiresAt, new Date()), isNull(passwordResetTokens.usedAt))).limit(1))[0];
+  if (!token) throw new Error("INVALID_RESET_TOKEN");
+  const passwordHash = await bcrypt.hash(password, 12);
+  await db.update(users).set({ passwordHash, authProvider: "credentials", loginMethod: "credentials" }).where(eq(users.id, token.userId));
+  await db.update(passwordResetTokens).set({ usedAt: new Date() }).where(eq(passwordResetTokens.id, token.id));
+  await db.delete(authSessions).where(eq(authSessions.userId, token.userId));
+  return { success: true } as const;
 }
 
 export async function createSession(userId: number) {

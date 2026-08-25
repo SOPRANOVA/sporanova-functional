@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { authenticateWithPassword, createSession, publicUser, registerWithPassword, revokeSession, SESSION_COOKIE, sessionCookieOptions } from "./auth";
+import { authenticateWithPassword, createSession, publicUser, registerWithPassword, requestPasswordReset, resetPassword, revokeSession, SESSION_COOKIE, sessionCookieOptions } from "./auth";
 import { bootstrapWorkspace } from "./db";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
@@ -22,10 +22,10 @@ export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(({ ctx }) => (ctx.user ? publicUser(ctx.user) : null)),
-    register: publicProcedure.input(credentialsInput.extend({ name: z.string().trim().min(2).max(160) })).mutation(async ({ ctx, input }) => {
+    register: publicProcedure.input(credentialsInput.extend({ name: z.string().trim().min(2).max(160), organizationName: z.string().trim().min(2).max(180).optional() })).mutation(async ({ ctx, input }) => {
       try {
         const user = await registerWithPassword(input);
-        await bootstrapWorkspace(user);
+        await bootstrapWorkspace(user, input.organizationName);
         const session = await createSession(user.id);
         ctx.res.cookie(SESSION_COOKIE, session.token, sessionCookieOptions(session.expiresAt));
         return publicUser(user);
@@ -40,6 +40,18 @@ export const appRouter = router({
       const session = await createSession(user.id);
       ctx.res.cookie(SESSION_COOKIE, session.token, sessionCookieOptions(session.expiresAt));
       return publicUser(user);
+    }),
+    requestPasswordReset: publicProcedure.input(z.object({ email: z.string().trim().email().max(320) })).mutation(async ({ input }) => {
+      await requestPasswordReset(input.email);
+      return { accepted: true } as const;
+    }),
+    resetPassword: publicProcedure.input(z.object({ token: z.string().min(20).max(200), password: z.string().min(12).max(128) })).mutation(async ({ input }) => {
+      try {
+        return await resetPassword(input.token, input.password);
+      } catch (error) {
+        if (error instanceof Error && error.message === "INVALID_RESET_TOKEN") throw new TRPCError({ code: "BAD_REQUEST", message: "This reset link is invalid or has expired." });
+        throw error;
+      }
     }),
     logout: publicProcedure.mutation(async ({ ctx }) => {
       const token = ctx.req.headers.cookie?.split(";").map(item => item.trim()).find(item => item.startsWith(`${SESSION_COOKIE}=`))?.slice(SESSION_COOKIE.length + 1);

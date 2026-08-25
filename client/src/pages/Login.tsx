@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import Logo from "../components/Logo";
+import { trpc } from "../lib/trpc";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,15 +10,25 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const login = trpc.auth.login.useMutation({
+    onSuccess: async () => {
+      setSuccess(true);
+      await new Promise((r) => setTimeout(r, 450));
+      navigate("/app/dashboard", { replace: true });
+    },
+    onError: (mutationError) => {
+      setError(mutationError.message);
+      setLoading(false);
+    },
+  });
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1400));
-    setSuccess(true);
-    await new Promise((r) => setTimeout(r, 800));
-    navigate("/app/dashboard");
+    login.mutate({ email, password });
   }
 
   return (
@@ -173,6 +184,8 @@ export default function Login() {
               <span className="text-sm" style={{ color: "#6B6660" }}>Remember me</span>
             </label>
 
+            {error && <p role="alert" className="text-xs" style={{ color: "#A05B5B" }}>{error}</p>}
+
             {/* Submit */}
             <button
               type="submit"
@@ -218,10 +231,13 @@ export default function Login() {
               <button
                 key={sso.label}
                 type="button"
+                disabled={sso.icon === "M"}
+                onClick={() => { if (sso.icon === "G") window.location.assign("/api/auth/google?returnTo=/app/dashboard"); }}
                 className="w-full py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-3 transition-all duration-200 border"
-                style={{ borderColor: "#E8E6E2", color: "#1A1F3C", background: "#fff" }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#D4D1CB"; e.currentTarget.style.background = "#F8F6F2"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#E8E6E2"; e.currentTarget.style.background = "#fff"; }}
+                style={{ borderColor: "#E8E6E2", color: "#1A1F3C", background: "#fff", opacity: sso.icon === "M" ? 0.55 : 1, cursor: sso.icon === "M" ? "not-allowed" : "pointer" }}
+                title={sso.icon === "M" ? "Microsoft sign-in is not configured" : undefined}
+                onMouseEnter={(e) => { if (sso.icon !== "M") { e.currentTarget.style.borderColor = "#D4D1CB"; e.currentTarget.style.background = "#F8F6F2"; } }}
+                onMouseLeave={(e) => { if (sso.icon !== "M") { e.currentTarget.style.borderColor = "#E8E6E2"; e.currentTarget.style.background = "#fff"; } }}
               >
                 <span className="font-semibold text-base" style={{ width: 18, textAlign: "center" }}>{sso.icon}</span>
                 {sso.label}
