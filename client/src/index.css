@@ -119,6 +119,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -134,6 +135,15 @@
 }
 
 @layer components {
+  .sn-label {
+    font-size: 0.66rem;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8C887F;
+  }
+
   /**
    * Custom container utility that centers content and adds responsive padding.
    *

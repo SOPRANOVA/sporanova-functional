@@ -1,92 +1,145 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
-import { ENV } from './_core/env';
+import { nanoid } from "nanoid";
+import {
+  auditLogs,
+  memberships,
+  organizations,
+  userPreferences,
+  users,
+  workspaces,
+  type InsertUser,
+} from "../drizzle/schema";
 
-let _db: ReturnType<typeof drizzle> | null = null;
+let connection: ReturnType<typeof drizzle> | null = null;
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
-  if (!_db && process.env.DATABASE_URL) {
-    try {
-      _db = drizzle(process.env.DATABASE_URL);
-    } catch (error) {
-      console.warn("[Database] Failed to connect:", error);
-      _db = null;
-    }
+  if (!connection && process.env.DATABASE_URL) {
+    connection = drizzle(process.env.DATABASE_URL);
   }
-  return _db;
+  return connection;
+}
+
+export async function requireDb() {
+  const db = await getDb();
+  if (!db) throw new Error("Database service is unavailable");
+  return db;
 }
 
 export async function upsertUser(user: InsertUser): Promise<void> {
-  if (!user.openId) {
-    throw new Error("User openId is required for upsert");
-  }
-
+  if (!user.openId) throw new Error("User openId is required for upsert");
   const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot upsert user: database not available");
-    return;
+  if (!db) return;
+
+  const values: InsertUser = { openId: user.openId, lastSignedIn: user.lastSignedIn ?? new Date() };
+  const updateSet: Partial<InsertUser> = { lastSignedIn: values.lastSignedIn };
+  for (const field of ["name", "email", "loginMethod"] as const) {
+    if (user[field] !== undefined) {
+      values[field] = user[field];
+      updateSet[field] = user[field];
+    }
   }
+  values.role = user.role ?? "user";
+  updateSet.role = values.role;
 
-  try {
-    const values: InsertUser = {
-      openId: user.openId,
-    };
-    const updateSet: Record<string, unknown> = {};
-
-    const textFields = ["name", "email", "loginMethod"] as const;
-    type TextField = (typeof textFields)[number];
-
-    const assignNullable = (field: TextField) => {
-      const value = user[field];
-      if (value === undefined) return;
-      const normalized = value ?? null;
-      values[field] = normalized;
-      updateSet[field] = normalized;
-    };
-
-    textFields.forEach(assignNullable);
-
-    if (user.lastSignedIn !== undefined) {
-      values.lastSignedIn = user.lastSignedIn;
-      updateSet.lastSignedIn = user.lastSignedIn;
-    }
-    if (user.role !== undefined) {
-      values.role = user.role;
-      updateSet.role = user.role;
-    } else if (user.openId === ENV.ownerOpenId) {
-      values.role = 'admin';
-      updateSet.role = 'admin';
-    }
-
-    if (!values.lastSignedIn) {
-      values.lastSignedIn = new Date();
-    }
-
-    if (Object.keys(updateSet).length === 0) {
-      updateSet.lastSignedIn = new Date();
-    }
-
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
-      set: updateSet,
-    });
-  } catch (error) {
-    console.error("[Database] Failed to upsert user:", error);
-    throw error;
-  }
+  await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
 }
 
 export async function getUserByOpenId(openId: string) {
   const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get user: database not available");
-    return undefined;
-  }
-
-  const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
-
-  return result.length > 0 ? result[0] : undefined;
+  if (!db) return undefined;
+  return (await db.select().from(users).where(eq(users.openId, openId)).limit(1))[0];
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getActiveMembership(workspaceId: number, userId: number) {
+  const db = await requireDb();
+  return (
+    await db
+      .select()
+      .from(memberships)
+      .where(and(eq(memberships.workspaceId, workspaceId), eq(memberships.userId, userId), eq(memberships.isActive, true)))
+      .limit(1)
+  )[0];
+}
+
+export async function getWorkspaceContext(workspaceId: number) {
+  const db = await requireDb();
+  return (
+    await db
+      .select({ workspace: workspaces, organization: organizations })
+      .from(workspaces)
+      .innerJoin(organizations, eq(workspaces.organizationId, organizations.id))
+      .where(and(eq(workspaces.id, workspaceId), isNull(workspaces.deletedAt), isNull(organizations.deletedAt)))
+      .limit(1)
+  )[0];
+}
+
+export async function listWorkspacesForUser(userId: number) {
+  const db = await requireDb();
+  return db
+    .select({ workspace: workspaces, organization: organizations, role: memberships.role })
+    .from(memberships)
+    .innerJoin(workspaces, eq(memberships.workspaceId, workspaces.id))
+    .innerJoin(organizations, eq(workspaces.organizationId, organizations.id))
+    .where(and(eq(memberships.userId, userId), eq(memberships.isActive, true), isNull(workspaces.deletedAt), isNull(organizations.deletedAt)));
+}
+
+function slugify(value: string) {
+  const base = value
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .slice(0, 90);
+  return base || "workspace";
+}
+
+export async function bootstrapWorkspace(user: { id: number; name?: string | null; email?: string | null }) {
+  const existing = await listWorkspacesForUser(user.id);
+  if (existing.length > 0) return existing;
+
+  const db = await requireDb();
+  const displayName = user.name?.trim() || user.email?.split("@")[0] || "My Organization";
+  const suffix = nanoid(6).toLowerCase();
+  const organizationName = `${displayName}'s Organization`;
+  const organizationInsert = await db.insert(organizations).values({
+    name: organizationName,
+    slug: `${slugify(displayName)}-${suffix}`,
+    createdById: user.id,
+  });
+  const organizationId = Number(organizationInsert[0].insertId);
+  const workspaceInsert = await db.insert(workspaces).values({
+    organizationId,
+    name: "Main workspace",
+    slug: "main",
+    isDefault: true,
+    createdById: user.id,
+  });
+  const workspaceId = Number(workspaceInsert[0].insertId);
+  await db.insert(memberships).values({ workspaceId, userId: user.id, role: "owner" });
+  await db.insert(userPreferences).values({ workspaceId, userId: user.id });
+  return listWorkspacesForUser(user.id);
+}
+
+export async function writeAuditLog(input: {
+  workspaceId: number;
+  actorUserId: number | null;
+  action: string;
+  resourceType: string;
+  resourceId?: string | number | null;
+  metadata?: Record<string, unknown>;
+}) {
+  const context = await getWorkspaceContext(input.workspaceId);
+  if (!context) return;
+  const db = await requireDb();
+  await db.insert(auditLogs).values({
+    organizationId: context.organization.id,
+    workspaceId: input.workspaceId,
+    actorUserId: input.actorUserId,
+    action: input.action,
+    resourceType: input.resourceType,
+    resourceId: input.resourceId === undefined || input.resourceId === null ? null : String(input.resourceId),
+    metadata: input.metadata,
+  });
+}

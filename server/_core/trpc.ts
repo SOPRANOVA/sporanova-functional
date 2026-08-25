@@ -8,7 +8,36 @@ const t = initTRPC.context<TrpcContext>().create({
 });
 
 export const router = t.router;
-export const publicProcedure = t.procedure;
+
+const requestLogging = t.middleware(async opts => {
+  const startedAt = Date.now();
+  try {
+    const result = await opts.next();
+    console.info(JSON.stringify({
+      event: "trpc.request",
+      path: opts.path,
+      type: opts.type,
+      userId: opts.ctx.user?.id ?? null,
+      durationMs: Date.now() - startedAt,
+      outcome: result.ok ? "success" : "error",
+    }));
+    return result;
+  } catch (error) {
+    const trpcError = error instanceof TRPCError ? error : null;
+    console.error(JSON.stringify({
+      event: "trpc.request",
+      path: opts.path,
+      type: opts.type,
+      userId: opts.ctx.user?.id ?? null,
+      durationMs: Date.now() - startedAt,
+      outcome: "error",
+      code: trpcError?.code ?? "INTERNAL_SERVER_ERROR",
+    }));
+    throw error;
+  }
+});
+
+export const publicProcedure = t.procedure.use(requestLogging);
 
 const requireUser = t.middleware(async opts => {
   const { ctx, next } = opts;
@@ -25,9 +54,9 @@ const requireUser = t.middleware(async opts => {
   });
 });
 
-export const protectedProcedure = t.procedure.use(requireUser);
+export const protectedProcedure = publicProcedure.use(requireUser);
 
-export const adminProcedure = t.procedure.use(
+export const adminProcedure = protectedProcedure.use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
 

@@ -1,28 +1,66 @@
-import { COOKIE_NAME } from "@shared/const";
-import { getSessionCookieOptions } from "./_core/cookies";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { authenticateWithPassword, createSession, publicUser, registerWithPassword, revokeSession, SESSION_COOKIE, sessionCookieOptions } from "./auth";
+import { bootstrapWorkspace } from "./db";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
+import { agentsRouter } from "./routers/agents";
+import { analyticsRouter } from "./routers/analytics";
+import { auditRouter, notificationsRouter } from "./routers/notifications";
+import { conversationsRouter, intelligenceRouter } from "./routers/conversations";
+import { dashboardRouter } from "./routers/dashboard";
+import { dataSourcesRouter, documentsRouter, memoryRouter } from "./routers/data";
+import { preferencesRouter, workspacesRouter } from "./routers/workspaces";
+import { workflowsRouter } from "./routers/workflows";
+
+const credentialsInput = z.object({
+  email: z.string().trim().email().max(320),
+  password: z.string().min(12, "Use at least 12 characters.").max(128),
+});
 
 export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
-    logout: publicProcedure.mutation(({ ctx }) => {
-      const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
-      return {
-        success: true,
-      } as const;
+    me: publicProcedure.query(({ ctx }) => (ctx.user ? publicUser(ctx.user) : null)),
+    register: publicProcedure.input(credentialsInput.extend({ name: z.string().trim().min(2).max(160) })).mutation(async ({ ctx, input }) => {
+      try {
+        const user = await registerWithPassword(input);
+        await bootstrapWorkspace(user);
+        const session = await createSession(user.id);
+        ctx.res.cookie(SESSION_COOKIE, session.token, sessionCookieOptions(session.expiresAt));
+        return publicUser(user);
+      } catch (error) {
+        if (error instanceof Error && error.message === "EMAIL_ALREADY_REGISTERED") throw new TRPCError({ code: "CONFLICT", message: "An account already exists for this email." });
+        throw error;
+      }
+    }),
+    login: publicProcedure.input(credentialsInput).mutation(async ({ ctx, input }) => {
+      const user = await authenticateWithPassword(input.email, input.password);
+      if (!user) throw new TRPCError({ code: "UNAUTHORIZED", message: "Email or password is incorrect." });
+      const session = await createSession(user.id);
+      ctx.res.cookie(SESSION_COOKIE, session.token, sessionCookieOptions(session.expiresAt));
+      return publicUser(user);
+    }),
+    logout: publicProcedure.mutation(async ({ ctx }) => {
+      const token = ctx.req.headers.cookie?.split(";").map(item => item.trim()).find(item => item.startsWith(`${SESSION_COOKIE}=`))?.slice(SESSION_COOKIE.length + 1);
+      await revokeSession(token);
+      ctx.res.clearCookie(SESSION_COOKIE, sessionCookieOptions());
+      return { success: true } as const;
     }),
   }),
-
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
+  workspaces: workspacesRouter,
+  preferences: preferencesRouter,
+  dashboard: dashboardRouter,
+  conversations: conversationsRouter,
+  intelligence: intelligenceRouter,
+  agents: agentsRouter,
+  dataSources: dataSourcesRouter,
+  documents: documentsRouter,
+  memory: memoryRouter,
+  analytics: analyticsRouter,
+  workflows: workflowsRouter,
+  notifications: notificationsRouter,
+  audit: auditRouter,
 });
 
 export type AppRouter = typeof appRouter;
