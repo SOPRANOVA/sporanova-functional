@@ -8,7 +8,7 @@ export const ENV = {
   appUrl: getOptional("APP_URL") ?? "http://localhost:3000",
   appOrigin: getOptional("APP_ORIGIN") ?? "http://localhost:3000",
   databaseUrl: getOptional("DATABASE_URL"),
-  sessionSecret: getOptional("SESSION_SECRET") ?? "",
+  sessionSecret: getOptional("SESSION_SECRET") ?? getOptional("JWT_SECRET") ?? "",
   sessionDays: Number(process.env.SESSION_DAYS ?? 14),
   ai: {
     provider: getOptional("AI_PROVIDER") ?? "openai-compatible",
