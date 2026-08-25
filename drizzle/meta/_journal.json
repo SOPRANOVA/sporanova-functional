@@ -29,6 +29,13 @@
       "when": 1787656956637,
       "tag": "0003_curly_randall",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1787658046935,
+      "tag": "0004_harsh_toxin",
+      "breakpoints": true
     }
   ]
 }

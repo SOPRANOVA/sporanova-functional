@@ -317,6 +317,21 @@ export const dataSourceRuns = mysqlTable(
   table => [index("data_source_runs_source_started_idx").on(table.dataSourceId, table.startedAt)],
 );
 
+export const dataRecords = mysqlTable(
+  "data_records",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    workspaceId: int("workspaceId").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
+    dataSourceId: int("dataSourceId").notNull().references(() => dataSources.id, { onDelete: "cascade" }),
+    externalId: varchar("externalId", { length: 255 }).notNull(),
+    payload: json("payload").$type<Record<string, unknown>>().notNull(),
+    searchableText: text("searchableText"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => [uniqueIndex("data_records_source_external_unique").on(table.dataSourceId, table.externalId), index("data_records_workspace_source_idx").on(table.workspaceId, table.dataSourceId)],
+);
+
 export const documents = mysqlTable(
   "documents",
   {

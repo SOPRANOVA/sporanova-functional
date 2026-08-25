@@ -43,3 +43,7 @@ WORKER_ID=sopranova-worker-1
 WORKER_POLL_MS=1500
 OTEL_EXPORTER_OTLP_ENDPOINT=
 SENTRY_DSN=
+
+# Optional local-development seed identity (never use in production)
+DEV_SEED_EMAIL=developer@example.test
+DEV_SEED_PASSWORD=ChangeThisDevelopmentPassword!2026

@@ -9,8 +9,8 @@
 - [x] Implementare API tRPC modulari con validazione, autorizzazione, risposte ed errori coerenti, logging strutturato e health check.
 - [x] Implementare dashboard e analytics server-side con intervalli, filtri, aggregazione, ordinamento e paginazione.
 - [x] Implementare agenti, esecuzioni tracciabili, conversazioni persistenti e ricerca della cronologia nel workspace autorizzato.
-- [ ] Completare connettori data source reali, gestione credenziali provider e pipeline di sincronizzazione/indicizzazione prima di attivare sorgenti esterne.
-- [ ] Completare data source, documenti e file con metadati, stato, controllo accessi, validazione e cancellazione sicura, includendo connettori e sincronizzazione provider reali.
+- [x] Completare un connettore data source HTTP reale, gestione cifrata delle credenziali e pipeline di sincronizzazione asincrona prima di attivare sorgenti esterne.
+- [x] Completare data source, documenti e file con metadati, stato, controllo accessi, validazione, cancellazione sicura e connettore HTTP sincronizzato.
 - [x] Implementare automazioni, notifiche persistenti e audit log per le azioni sensibili evidenziate dal frontend.
 - [ ] Completare la sostituzione dei controlli non operativi delle integrazioni esterne con flussi configurati o nasconderli fino alla configurazione.
 - [ ] Eseguire la verifica visiva autenticata delle principali schermate app e rifinire eventuali differenze dall’interfaccia allegata.
@@ -26,3 +26,9 @@
 - [x] Isolare o eliminare framework, endpoint, environment variable e pacchetti Manus dalla build di produzione.
 - [x] Preparare sviluppo locale, backup database, migrazioni, seed e istruzioni di deploy indipendenti dal provider.
 - [x] Eseguire il test di portabilità e l’audit finale per attestare l’assenza di dipendenze runtime da Manus.
+
+- [ ] مطابقة الواجهة الحالية حرفيًا مع واجهة الملف المرفق، من دون إعادة تصميم أو تحسينات بصرية إضافية.
+- [ ] مقارنة التخطيط والألوان والخطوط والمسافات والمكونات والصفحات الأصلية صفحة بصفحة.
+- [ ] التقاط لقطات تحقق للواجهة المطابقة وإزالة أي فروقات غير مطلوبة.
+- [ ] تشغيل الاختبارات وحفظ نسخة checkpoint من الواجهة المطابقة.
+
