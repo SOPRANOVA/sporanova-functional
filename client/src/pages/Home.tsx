@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import PublicNav from "../components/PublicNav";
 import AnimatedSection from "../components/AnimatedSection";
 import Logo from "../components/Logo";
+import usePrefersReducedMotion from "../hooks/usePrefersReducedMotion";
 
 function HeroVisual() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -101,6 +102,80 @@ function MotionBackdrop() {
   );
 }
 
+function HeroVideoLayer() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [failed, setFailed] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [videoProgress, setVideoProgress] = useState(0);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const reducedMotion = usePrefersReducedMotion();
+
+  // Playback state is synced through play/pause events so the toggle handlers
+  // stay free of duplicated state writes.
+  useEffect(() => {
+    if (reducedMotion) videoRef.current?.pause();
+  }, [reducedMotion]);
+
+  const toggleVideoPlayback = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) void video.play().catch(() => setIsPlaying(false));
+    else video.pause();
+  };
+
+  const toggleVideoMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  };
+
+  const seekVideo = (value: number) => {
+    const video = videoRef.current;
+    if (!video || !video.duration) return;
+    video.currentTime = value * video.duration;
+    setVideoProgress(value);
+  };
+
+  return (
+    <>
+      {!failed && (
+        <video
+          ref={videoRef}
+          className="absolute inset-0 h-full w-full object-cover opacity-[0.18] mix-blend-multiply"
+          autoPlay={!reducedMotion}
+          muted={isMuted}
+          loop
+          playsInline
+          preload="metadata"
+          aria-hidden="true"
+          onLoadedMetadata={(event) => setVideoDuration(event.currentTarget.duration)}
+          onTimeUpdate={(event) => {
+            const video = event.currentTarget;
+            setVideoProgress(video.duration ? video.currentTime / video.duration : 0);
+          }}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onError={() => setFailed(true)}
+          src="/manus-storage/sopranova-intelligence-loop_4515574a.mp4"
+        />
+      )}
+      {!failed && videoDuration > 0 && (
+        <div className="absolute bottom-8 right-6 z-20 flex w-[min(18rem,calc(100%-3rem))] items-center gap-3 rounded-full border border-white/45 bg-white/55 px-3 py-2 text-sn-navy shadow-[0_12px_40px_rgba(26,31,60,0.08)] backdrop-blur-md">
+          <button type="button" onClick={toggleVideoPlayback} className="grid h-7 w-7 shrink-0 place-items-center rounded-full transition hover:bg-sn-navy hover:text-sn-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sn-navy" aria-label={isPlaying ? "Pause hero video" : "Play hero video"}>
+            {isPlaying ? "Ⅱ" : "▶"}
+          </button>
+          <input type="range" min="0" max="1" step="0.001" value={videoProgress} onChange={(event) => seekVideo(Number(event.target.value))} className="h-1 min-w-0 flex-1 cursor-pointer rounded-full accent-sn-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sn-navy" aria-label="Hero video progress" />
+          <button type="button" onClick={toggleVideoMute} className="grid h-7 w-7 shrink-0 place-items-center rounded-full transition hover:bg-sn-navy hover:text-sn-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sn-navy" aria-label={isMuted ? "Unmute hero video" : "Mute hero video"}>
+            {isMuted ? "⌁" : "◖"}
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
 const capabilities = [
   { label: "AI Intelligence", desc: "Conversational intelligence across your entire enterprise data landscape." },
   { label: "Analytics", desc: "Real-time insights that surface patterns invisible to conventional tools." },
@@ -122,46 +197,10 @@ const trustedBy = ["Meridian Financial", "Atlas Corp", "Nexus Capital", "Vantage
 export default function Home() {
   const [activeCapability, setActiveCapability] = useState(0);
   const [heroVisible, setHeroVisible] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  const [videoProgress, setVideoProgress] = useState(0);
-  const [videoDuration, setVideoDuration] = useState(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const toggleVideoPlayback = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (video.paused) {
-      void video.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
-    } else {
-      video.pause();
-      setIsPlaying(false);
-    }
-  };
-
-  const toggleVideoMute = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = !video.muted;
-    setIsMuted(video.muted);
-  };
-
-  const seekVideo = (value: number) => {
-    const video = videoRef.current;
-    if (!video || !video.duration) return;
-    video.currentTime = value * video.duration;
-    setVideoProgress(value);
-  };
 
   useEffect(() => {
     const t = setTimeout(() => setHeroVisible(true), 100);
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateMotionPreference = () => setReducedMotion(media.matches);
-    updateMotionPreference();
-    media.addEventListener("change", updateMotionPreference);
-    return () => { clearTimeout(t); media.removeEventListener("change", updateMotionPreference); };
+    return () => clearTimeout(t);
   }, []);
 
   return (
@@ -171,40 +210,9 @@ export default function Home() {
       {/* Hero */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(107,127,191,0.06) 0%, transparent 70%)" }} />
-        {!videoFailed && (
-          <video
-            ref={videoRef}
-            className="absolute inset-0 h-full w-full object-cover opacity-[0.18] mix-blend-multiply"
-            autoPlay={!reducedMotion}
-            muted={isMuted}
-            loop
-            playsInline
-            preload="metadata"
-            aria-hidden="true"
-            onLoadedMetadata={(event) => setVideoDuration(event.currentTarget.duration)}
-            onTimeUpdate={(event) => {
-              const video = event.currentTarget;
-              setVideoProgress(video.duration ? video.currentTime / video.duration : 0);
-            }}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            onError={() => setVideoFailed(true)}
-            src="/manus-storage/sopranova-intelligence-loop_4515574a.mp4"
-          />
-        )}
+        <HeroVideoLayer />
         <MotionBackdrop />
         <HeroVisual />
-        {!videoFailed && videoDuration > 0 && (
-          <div className="absolute bottom-8 right-6 z-20 flex w-[min(18rem,calc(100%-3rem))] items-center gap-3 rounded-full border border-white/45 bg-white/55 px-3 py-2 text-sn-navy shadow-[0_12px_40px_rgba(26,31,60,0.08)] backdrop-blur-md">
-            <button type="button" onClick={toggleVideoPlayback} className="grid h-7 w-7 shrink-0 place-items-center rounded-full transition hover:bg-sn-navy hover:text-sn-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sn-navy" aria-label={isPlaying ? "Pause hero video" : "Play hero video"}>
-              {isPlaying ? "Ⅱ" : "▶"}
-            </button>
-            <input type="range" min="0" max="1" step="0.001" value={videoProgress} onChange={(event) => seekVideo(Number(event.target.value))} className="h-1 min-w-0 flex-1 accent-sn-navy" aria-label="Hero video progress" />
-            <button type="button" onClick={toggleVideoMute} className="grid h-7 w-7 shrink-0 place-items-center rounded-full transition hover:bg-sn-navy hover:text-sn-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sn-navy" aria-label={isMuted ? "Unmute hero video" : "Mute hero video"}>
-              {isMuted ? "⌁" : "◖"}
-            </button>
-          </div>
-        )}
         <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16"
           style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(20px)", transition: "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)" }}>
           <div className="max-w-3xl">

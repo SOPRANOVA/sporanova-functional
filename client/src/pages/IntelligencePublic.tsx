@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import PublicNav from "../components/PublicNav";
 import AnimatedSection from "../components/AnimatedSection";
+import ExplainerVideo from "../components/ExplainerVideo";
 import Logo from "../components/Logo";
 
 const steps = [
@@ -46,6 +47,15 @@ export default function IntelligencePublic() {
               </div>
             ))}
           </div>
+        </AnimatedSection>
+
+        {/* Intelligence explainer film container — asset pending generation */}
+        <AnimatedSection className="mb-24" delay={100}>
+          <ExplainerVideo
+            label="Intelligence Film"
+            title="Contextual reasoning that turns patterns into insight and action."
+            description="From understanding a question to discovering cross-domain patterns, generating evidence-backed insights, and recommending the next move."
+          />
         </AnimatedSection>
 
         {/* Example query */}
