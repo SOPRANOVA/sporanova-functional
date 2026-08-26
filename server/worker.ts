@@ -53,7 +53,7 @@ function extractPdfText(value: Buffer) {
   return Array.from(source.matchAll(/\(([^()]{1,500})\)\s*Tj/g)).map(match => match[1]).join(" ").replace(/\\([\\()])/g, "$1").trim();
 }
 
-async function extractDocumentText(bytes: Buffer, mimeType: string) {
+export async function extractDocumentText(bytes: Buffer, mimeType: string) {
   if (mimeType === "text/csv" || mimeType === "text/plain") return bytes.toString("utf8").replace(/\r\n/g, "\n").trim();
   if (mimeType === "application/pdf") return extractPdfText(bytes);
   const zip = await JSZip.loadAsync(bytes);
@@ -78,6 +78,17 @@ export function chunkText(text: string, size = 3500) {
   return chunks.slice(0, 500);
 }
 
+export function workflowExecutionPlan(nodes: Array<{ id: number; nodeKey: string; configuration: unknown }>) {
+  const executed: number[] = [];
+  const unsupported: string[] = [];
+  for (const node of nodes) {
+    const config = (node.configuration ?? {}) as Record<string, unknown>;
+    if (config.action === "create_notification" && typeof config.recipientUserId === "number" && typeof config.title === "string" && typeof config.content === "string") executed.push(node.id);
+    else unsupported.push(node.nodeKey);
+  }
+  return { executed, unsupported };
+}
+
 async function processAgentRun(payload: Record<string, unknown>) {
   const runId = Number(payload.runId); const agentId = Number(payload.agentId); const workspaceId = Number(payload.workspaceId); const actorUserId = Number(payload.actorUserId); const instruction = String(payload.instruction ?? "");
   if (!Number.isInteger(runId) || !Number.isInteger(agentId) || !Number.isInteger(workspaceId) || !instruction) throw new Error("Invalid agent.run job payload");
@@ -97,7 +108,7 @@ async function processAgentRun(payload: Record<string, unknown>) {
   }
 }
 
-async function processDataSourceSync(payload: Record<string, unknown>) {
+export async function processDataSourceSync(payload: Record<string, unknown>) {
   const dataSourceId = Number(payload.dataSourceId); const runId = Number(payload.runId); const workspaceId = Number(payload.workspaceId);
   if (!Number.isInteger(dataSourceId) || !Number.isInteger(runId) || !Number.isInteger(workspaceId)) throw new Error("Invalid data-source.sync job payload");
   const db = await requireDb();
@@ -123,7 +134,7 @@ async function processDataSourceSync(payload: Record<string, unknown>) {
   }
 }
 
-async function processDocument(payload: Record<string, unknown>) {
+export async function processDocument(payload: Record<string, unknown>) {
   const documentId = Number(payload.documentId); const workspaceId = Number(payload.workspaceId);
   if (!Number.isInteger(documentId) || !Number.isInteger(workspaceId)) throw new Error("Invalid document.process job payload");
   const db = await requireDb();
@@ -152,7 +163,7 @@ async function processDocument(payload: Record<string, unknown>) {
   }
 }
 
-async function processWorkflowRun(payload: Record<string, unknown>) {
+export async function processWorkflowRun(payload: Record<string, unknown>) {
   const runId = Number(payload.runId); const workspaceId = Number(payload.workspaceId);
   if (!Number.isInteger(runId) || !Number.isInteger(workspaceId)) throw new Error("Invalid workflow.run job payload");
   const db = await requireDb();
@@ -163,20 +174,18 @@ async function processWorkflowRun(payload: Record<string, unknown>) {
   await db.update(workflowRuns).set({ status: "running", startedAt: new Date() }).where(eq(workflowRuns.id, runId));
   try {
     const actionNodes = await db.select().from(workflowNodes).where(and(eq(workflowNodes.workflowId, workflow.id), eq(workflowNodes.nodeType, "action"))).orderBy(asc(workflowNodes.sortOrder));
-    const executed: number[] = []; const unsupported: string[] = [];
+    const plan = workflowExecutionPlan(actionNodes);
     for (const node of actionNodes) {
       const config = (node.configuration ?? {}) as Record<string, unknown>;
-      if (config.action === "create_notification" && typeof config.recipientUserId === "number" && typeof config.title === "string" && typeof config.content === "string") {
-        await db.insert(notifications).values({ workspaceId, recipientUserId: config.recipientUserId, type: "workflow", title: config.title.slice(0, 255), content: config.content });
-        const recipient = (await db.select().from(users).where(eq(users.id, config.recipientUserId)).limit(1))[0];
-        if (recipient?.email) await sendEmail({ to: recipient.email, subject: config.title.slice(0, 255), text: config.content });
-        executed.push(node.id);
-      } else unsupported.push(node.nodeKey);
+      if (!plan.executed.includes(node.id)) continue;
+      await db.insert(notifications).values({ workspaceId, recipientUserId: config.recipientUserId as number, type: "workflow", title: (config.title as string).slice(0, 255), content: config.content as string });
+      const recipient = (await db.select().from(users).where(eq(users.id, config.recipientUserId as number)).limit(1))[0];
+      if (recipient?.email) await sendEmail({ to: recipient.email, subject: (config.title as string).slice(0, 255), text: config.content as string });
     }
-    if (!executed.length) throw new Error("This workflow has no configured executable notification action.");
-    const output = { executedNotificationNodes: executed, unsupportedNodes: unsupported };
-    await db.update(workflowRuns).set({ status: unsupported.length ? "failed" : "completed", output, errorMessage: unsupported.length ? "Some workflow nodes are not configured with a supported action." : null, completedAt: new Date() }).where(eq(workflowRuns.id, runId));
-    await writeAuditLog({ workspaceId, actorUserId: run.createdById ?? null, action: unsupported.length ? "workflow.run_partially_failed" : "workflow.run_completed", resourceType: "workflowRun", resourceId: runId, metadata: { workflowId: workflow.id, ...output } });
+    if (!plan.executed.length) throw new Error("This workflow has no configured executable notification action.");
+    const output = { executedNotificationNodes: plan.executed, unsupportedNodes: plan.unsupported };
+    await db.update(workflowRuns).set({ status: plan.unsupported.length ? "failed" : "completed", output, errorMessage: plan.unsupported.length ? "Some workflow nodes are not configured with a supported action." : null, completedAt: new Date() }).where(eq(workflowRuns.id, runId));
+    await writeAuditLog({ workspaceId, actorUserId: run.createdById ?? null, action: plan.unsupported.length ? "workflow.run_partially_failed" : "workflow.run_completed", resourceType: "workflowRun", resourceId: runId, metadata: { workflowId: workflow.id, ...output } });
   } catch (error) {
     const message = error instanceof Error ? error.message.slice(0, 2000) : "Workflow execution failed";
     await db.update(workflowRuns).set({ status: "failed", errorMessage: message, completedAt: new Date() }).where(eq(workflowRuns.id, runId));

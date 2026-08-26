@@ -11,7 +11,7 @@ Lo scaffold iniziale contiene dipendenze runtime dirette da Manus per identità,
 | AI | `server/_core/llm.ts` e `BUILT_IN_FORGE_*` | Produzione | AI gateway interno con endpoint OpenAI-compatible configurabile e adapter provider. |
 | Storage | `server/storage.ts`, `/manus-storage/*`, Forge presign | Produzione | Storage S3-compatible tramite SDK AWS e URL firmati, controllato da variabili SOPRANOVA. |
 | Notifiche | `server/_core/notification.ts` | Produzione | Service email/in-app indipendente con provider configurabile. |
-| Job e schedulazioni | `server/_core/heartbeat.ts`, SDK Manus | Produzione | Coda persistita nel database più worker Node separato e polling idempotente. |
+| Job e schedulazioni | `server/jobs.ts`, `server/worker.ts` | Produzione | Coda persistita nel database più worker Node separato e polling idempotente; eventuali trigger periodici sono affidati a un provider HTTP esterno configurato dall’organizzazione. |
 | Vite / preview | `vite-plugin-manus-runtime`, collector `__manus__`, allowlist preview | Sviluppo | Rimuovere dal manifest e dalla configurazione; mantenere una configurazione Vite standard. |
 | UI | `ManusDialog`, cookie/session storage preview | Produzione | Rimuovere riferimenti e usare la UI auth SOPRANOVA. |
 | Log e analytics preview | `.manus-logs`, script analytics in `client/index.html` | Sviluppo/produzione | Rimuovere dalla build di produzione; adottare monitoring configurabile. |
@@ -38,7 +38,7 @@ La build di produzione non deve importare plugin, environment variable, endpoint
 
 ## Audit conclusivo
 
-Una ricerca sui file di runtime e build — `client`, `server`, `shared`, `package.json`, `vite.config.ts` e `tsconfig.json` — per `manus`, `BUILT_IN_FORGE`, `VITE_APP_ID`, `OAUTH_SERVER_URL`, `VITE_OAUTH` e `manus-` non ha restituito alcuna occorrenza. Il pacchetto `vite-plugin-manus-runtime`, gli endpoint OAuth del template, proxy storage, Forge AI, heartbeat e notifiche del template sono stati rimossi dalla build.
+Una ricerca sui file di runtime e build — `client`, `server`, `shared`, `package.json`, `vite.config.ts` e `tsconfig.json` — per `manus`, `BUILT_IN_FORGE`, `VITE_APP_ID`, `OAUTH_SERVER_URL`, `VITE_OAUTH` e `manus-` non ha restituito alcuna occorrenza. Il pacchetto `vite-plugin-manus-runtime`, gli endpoint OAuth del template, proxy storage, Forge AI, heartbeat e notifiche del template sono assenti dalla build; rimangono soltanto gli adapter SOPRANOVA e i provider esterni configurabili.
 
 | Classe | Esito |
 |---|---|
