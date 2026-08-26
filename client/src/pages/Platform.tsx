@@ -1,74 +1,110 @@
+import { Link } from "react-router";
 import PublicNav from "../components/PublicNav";
 import AnimatedSection from "../components/AnimatedSection";
-import { Link } from "react-router";
+import Logo from "../components/Logo";
 
-const pillars = [
-  { title: "AI Intelligence", desc: "Conversational AI trained on your enterprise data. Ask anything, get answers grounded in your actual business context.", icon: "◈" },
-  { title: "Enterprise Memory", desc: "A persistent, semantic understanding of your organization — documents, people, processes, decisions.", icon: "◉" },
-  { title: "AI Agents", desc: "Autonomous agents that run tasks, monitor signals, generate reports, and take action on your behalf.", icon: "◎" },
-  { title: "Analytics", desc: "Real-time dashboards and KPI tracking that translate raw data into actionable business intelligence.", icon: "◐" },
-  { title: "Automation", desc: "Intelligent workflows that trigger on signals, apply AI reasoning, and execute multi-step business processes.", icon: "◑" },
-  { title: "Decision Intelligence", desc: "From insight to action — recommendations with explainable rationale and confidence scoring.", icon: "◒" },
+const layers = [
+  { id: "01", label: "Data", title: "Universal Data Connectivity", desc: "Connect any data source — structured databases, unstructured documents, real-time streams, and external APIs. SOPRANOVA normalizes and semantically indexes everything into a unified enterprise knowledge graph.", color: "#4A7FA5" },
+  { id: "02", label: "Intelligence", title: "Reasoning & Analysis", desc: "A sophisticated reasoning layer that understands your business context, identifies patterns across disparate data sources, and generates actionable insights grounded in evidence.", color: "#5B6FA8" },
+  { id: "03", label: "Agents", title: "Autonomous AI Agents", desc: "Deploy specialized agents that monitor, analyze, and act within defined parameters. Each agent maintains context, learns from outcomes, and collaborates with the broader intelligence system.", color: "#6B7FBF" },
+  { id: "04", label: "Decisions", title: "Decision Intelligence", desc: "Transform insights into structured decisions with full evidence trails, stakeholder routing, and approval workflows. Every decision is traceable, auditable, and reversible.", color: "#8B8FC4" },
+  { id: "05", label: "Actions", title: "Intelligent Automation", desc: "Close the loop from insight to action. Trigger workflows, notify stakeholders, update systems, and measure outcomes — all within a unified, auditable automation layer.", color: "#4A8B8C" },
 ];
 
 export default function Platform() {
   return (
     <div className="min-h-screen bg-sn-white">
       <PublicNav />
-      <section className="pt-36 pb-24 max-w-7xl mx-auto px-6">
+      <div className="pt-32 pb-24 max-w-7xl mx-auto px-6">
         <AnimatedSection>
-          <div className="sn-label mb-4">The Platform</div>
-          <h1 className="sn-display mb-6" style={{ fontSize: "clamp(2.5rem,5vw,4rem)", color: "#1A1F3C" }}>
-            One intelligent system.<br />Every enterprise layer.
+          <div className="sn-label mb-6">The Platform</div>
+          <h1 className="sn-display mb-6" style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", color: "#1A1F3C", maxWidth: "700px" }}>
+            One intelligent operating layer for your entire enterprise.
           </h1>
-          <p className="max-w-xl text-lg leading-relaxed mb-10" style={{ color: "#6B6660" }}>
-            SOPRANOVA is not a collection of tools. It is a unified intelligence architecture designed for the complexity of modern enterprise.
+          <p className="text-lg leading-relaxed mb-16" style={{ color: "#6B6660", maxWidth: "560px" }}>
+            SOPRANOVA is not a tool. It is a platform — a continuous intelligence layer that sits above your data, your teams, and your systems, turning information into decisions at the speed of business.
           </p>
-          <div className="flex gap-4">
+        </AnimatedSection>
+
+        {/* Platform diagram */}
+        <AnimatedSection className="mb-24" delay={100}>
+          <div className="rounded-3xl p-10 md:p-16 relative overflow-hidden" style={{ background: "#1A1F3C" }}>
+            <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(107,127,191,0.12) 0%, transparent 65%)" }} />
+            <div className="relative">
+              <div className="sn-label mb-8" style={{ color: "rgba(248,246,242,0.4)" }}>Intelligence flow</div>
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                {["Data", "Intelligence", "Agents", "Decisions", "Actions"].map((step, i) => (
+                  <div key={step} className="flex items-center gap-4">
+                    <div className="text-center">
+                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-2 mx-auto"
+                        style={{ background: `rgba(107,127,191,${0.12 + i * 0.06})`, border: "1px solid rgba(107,127,191,0.2)" }}>
+                        <span className="text-xs font-semibold" style={{ color: "rgba(248,246,242,0.8)" }}>0{i + 1}</span>
+                      </div>
+                      <div className="text-sm font-medium" style={{ color: "#F8F6F2" }}>{step}</div>
+                    </div>
+                    {i < 4 && (
+                      <div className="hidden md:block w-8 h-px" style={{ background: "rgba(107,127,191,0.35)" }}>
+                        <div className="w-full h-full flex items-center justify-end">
+                          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "rgba(107,127,191,0.6)" }} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
+
+        {/* Layers */}
+        <div className="space-y-5">
+          {layers.map((layer, i) => (
+            <AnimatedSection key={layer.id} delay={i * 60}>
+              <div className="rounded-2xl p-8 border transition-all duration-300" style={{ background: "#FAFAF8", borderColor: "#E8E6E2" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = layer.color + "40"; (e.currentTarget as HTMLDivElement).style.transform = "translateX(4px)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "#E8E6E2"; (e.currentTarget as HTMLDivElement).style.transform = ""; }}>
+                <div className="flex flex-col md:flex-row gap-8">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: layer.color + "15" }}>
+                      <span className="text-xs font-semibold" style={{ color: layer.color }}>{layer.id}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="sn-label mb-2" style={{ color: layer.color }}>{layer.label}</div>
+                    <h3 className="text-xl font-medium mb-3" style={{ color: "#1A1F3C" }}>{layer.title}</h3>
+                    <p className="text-sm leading-relaxed" style={{ color: "#6B6660", maxWidth: "600px" }}>{layer.desc}</p>
+                  </div>
+                </div>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <AnimatedSection className="mt-20 text-center" delay={200}>
+          <div className="sn-label mb-4">Begin with SOPRANOVA</div>
+          <h2 className="sn-display mb-6" style={{ fontSize: "2rem", color: "#1A1F3C" }}>Ready to see it in action?</h2>
+          <div className="flex flex-wrap gap-4 justify-center">
             <Link to="/signup" className="px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300"
               style={{ background: "#1A1F3C", color: "#FAFAF8" }}
               onMouseEnter={(e) => { e.currentTarget.style.background = "#252B4A"; e.currentTarget.style.transform = "translateY(-2px)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = "#1A1F3C"; e.currentTarget.style.transform = ""; }}>
               Get Started
             </Link>
+            <Link to="/contact" className="px-6 py-3 rounded-xl text-sm font-medium border transition-all duration-300"
+              style={{ borderColor: "#D4D1CB", color: "#1A1F3C" }}>
+              Request Demo
+            </Link>
           </div>
         </AnimatedSection>
-      </section>
+      </div>
 
-      <section className="py-16 border-y border-sn-100">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {pillars.map((p, i) => (
-              <AnimatedSection key={p.title} delay={i * 60}>
-                <div className="p-6 rounded-2xl h-full transition-all duration-300 group"
-                  style={{ background: "#FAFAF8", border: "1px solid #E8E6E2" }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 24px rgba(26,31,60,0.06)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.transform = ""; (e.currentTarget as HTMLDivElement).style.boxShadow = ""; }}>
-                  <div className="text-2xl mb-4" style={{ color: "#6B7FBF" }}>{p.icon}</div>
-                  <h3 className="font-medium mb-2" style={{ color: "#1A1F3C" }}>{p.title}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: "#8C887F" }}>{p.desc}</p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
+      <footer className="border-t border-sn-100 py-10">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <Logo size={20} showWordmark />
+          <div className="text-sm" style={{ color: "#B8B4AC" }}>© 2026 SOPRANOVA</div>
         </div>
-      </section>
-
-      <section className="py-24 max-w-7xl mx-auto px-6 text-center">
-        <AnimatedSection>
-          <h2 className="sn-display mb-6" style={{ fontSize: "clamp(1.8rem,3.5vw,3rem)", color: "#1A1F3C" }}>
-            Built for enterprise scale
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-10">
-            {[["SOC 2 Type II", "Security"], ["99.99%", "Uptime SLA"], ["GDPR + HIPAA", "Compliance"], ["24/7", "Enterprise support"]].map(([val, lbl]) => (
-              <div key={lbl}>
-                <div className="sn-display text-2xl mb-1" style={{ color: "#1A1F3C" }}>{val}</div>
-                <div className="sn-label">{lbl}</div>
-              </div>
-            ))}
-          </div>
-        </AnimatedSection>
-      </section>
+      </footer>
     </div>
   );
 }

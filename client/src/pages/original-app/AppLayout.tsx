@@ -3,24 +3,28 @@ import { Link, Outlet, useLocation } from "react-router";
 import Logo from "../../components/Logo";
 
 const navItems = [
-  { href: "/app/dashboard", label: "Dashboard", icon: (
+  { href: "/app/dashboard", label: "Command Center", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="10" y="2" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="2" y="10" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="10" y="10" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/></svg>
   )},
   { href: "/app/intelligence", label: "Intelligence", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.3"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2M4.22 4.22l1.42 1.42M12.36 12.36l1.42 1.42M4.22 13.78l1.42-1.42M12.36 5.64l1.42-1.42" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
   )},
+  { href: "/app/decisions", label: "Decisions", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>◐</span> },
   { href: "/app/agents", label: "AI Agents", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="5" y="7" width="8" height="7" rx="2" stroke="currentColor" strokeWidth="1.3"/><path d="M7 7V5.5a2 2 0 014 0V7" stroke="currentColor" strokeWidth="1.3"/><circle cx="7.5" cy="10.5" r="1" fill="currentColor"/><circle cx="10.5" cy="10.5" r="1" fill="currentColor"/></svg>
   )},
   { href: "/app/data", label: "Data", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><ellipse cx="9" cy="5" rx="6" ry="2.5" stroke="currentColor" strokeWidth="1.3"/><path d="M3 5v4c0 1.38 2.69 2.5 6 2.5S15 10.38 15 9V5" stroke="currentColor" strokeWidth="1.3"/><path d="M3 9v4c0 1.38 2.69 2.5 6 2.5S15 14.38 15 13V9" stroke="currentColor" strokeWidth="1.3"/></svg>
   )},
+  { href: "/app/memory", label: "Memory", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>◻</span> },
   { href: "/app/analytics", label: "Analytics", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 14l4-5 4 3 4-7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/><circle cx="6" cy="9" r="1.5" fill="currentColor"/><circle cx="10" cy="12" r="1.5" fill="currentColor"/></svg>
   )},
   { href: "/app/automations", label: "Automations", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M10 3l-1 4h4l-5 8 1-5H5l5-7z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/></svg>
   )},
+  { href: "/app/activity", label: "Activity", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>◷</span> },
+  { href: "/app/workspace", label: "Workspace", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>◈</span> },
   { href: "/app/settings", label: "Settings", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.3"/><path d="M9 2v1.5M9 14.5V16M2 9h1.5M14.5 9H16M3.93 3.93l1.06 1.06M13 13l1.07 1.07M14.07 3.93L13 5M5 13l-1.07 1.07" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
   )},

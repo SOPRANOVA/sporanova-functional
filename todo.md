@@ -12,7 +12,7 @@
 - [x] Completare un connettore data source HTTP reale, gestione cifrata delle credenziali e pipeline di sincronizzazione asincrona prima di attivare sorgenti esterne.
 - [x] Completare data source, documenti e file con metadati, stato, controllo accessi, validazione, cancellazione sicura e connettore HTTP sincronizzato.
 - [x] Implementare automazioni, notifiche persistenti e audit log per le azioni sensibili evidenziate dal frontend.
-- [ ] Completare la sostituzione dei controlli non operativi delle integrazioni esterne con flussi configurati o nasconderli fino alla configurazione.
+- [x] Completare la sostituzione dei controlli non operativi delle integrazioni esterne con flussi configurati o nasconderli fino alla configurazione.
 - [ ] Eseguire la verifica visiva autenticata delle principali schermate app e rifinire eventuali differenze dall’interfaccia allegata.
 - [ ] Estendere i test Vitest ai flussi applicativi agenti, intelligence, workflow, notifiche, analytics e frontend/backend oltre alla copertura già presente di authz, salute e upload.
 - [x] Preparare seed di sviluppo, configurazione ambienti, documentazione API, architettura, migrazioni e istruzioni di distribuzione.
@@ -35,3 +35,5 @@
 
 - [x] إنشاء نسخة كفر LinkedIn بالمقاس الدقيق 1584×396 بكسل والتحقق من صلاحيتها للرفع.
 - [x] تحديث كفر LinkedIn ليستخدم اللوجو الحقيقي المرفق لـ SOPRANOVA بوضوح داخل مقاس 1584×396.
+- [ ] فحص تصميم Figma الجديد وملف Followpromptinstructions.zip ثم إعادة تطبيق التصميم على صفحات SOPRANOVA مع الحفاظ على الوظائف الحالية.
+- [ ] إعادة تنفيذ الواجهة كنسخة مطابقة حرفيًا لمصدر Figma المرفق، بما يشمل الصفحات العامة والمصادقة والتطبيق المحمي، مع إبقاء الوظائف الحقيقية الحالية.

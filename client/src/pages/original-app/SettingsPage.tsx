@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const settingsSections = ["Profile", "Workspace", "Team", "Security", "Notifications", "Integrations", "AI Preferences", "Billing"];
+const settingsSections = ["Profile", "Workspace", "Team", "Security", "Notifications", "AI Preferences"];
 
 function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -19,7 +19,7 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
 
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState("Profile");
-  const [notifs, setNotifs] = useState({ email: true, slack: false, weekly: true, agents: true, anomalies: true, reports: false });
+  const [notifs, setNotifs] = useState({ email: true, weekly: true, agents: true, anomalies: true, reports: false });
   const [aiPrefs, setAiPrefs] = useState({ contextWindow: true, citations: true, proactive: false, tone: "professional" });
 
   return (
@@ -93,7 +93,6 @@ export default function SettingsPage() {
                 <div className="sn-label mb-4">Notification Channels</div>
                 <div className="flex flex-col gap-4">
                   {([["email", "Email notifications", "Receive updates at jane@meridian.com"],
-                    ["slack", "Slack integration", "Send notifications to #sopranova-alerts"],
                     ["weekly", "Weekly digest", "Summary of the week every Monday morning"],
                   ] as [keyof typeof notifs, string, string][]).map(([key, label, desc]) => (
                     <div key={key} className="flex items-center justify-between py-3 border-b last:border-0" style={{ borderColor: "#F4F3F0" }}>
@@ -161,13 +160,6 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {!["Profile", "Notifications", "AI Preferences"].includes(activeSection) && (
-            <div className="p-8 rounded-2xl text-center" style={{ background: "#FAFAF8", border: "1px solid #E8E6E2" }}>
-              <div className="sn-label mb-3">Coming Soon</div>
-              <h3 className="text-lg font-medium mb-2" style={{ color: "#1A1F3C" }}>{activeSection}</h3>
-              <p className="text-sm" style={{ color: "#8C887F" }}>This settings section is being finalized for enterprise release.</p>
-            </div>
-          )}
         </div>
       </div>
     </div>

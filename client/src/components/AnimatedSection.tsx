@@ -22,15 +22,22 @@ export default function AnimatedSection({ children, className = "", delay = 0, a
     return () => observer.disconnect();
   }, []);
 
-  const animMap = { "slide-up": "sn-slide-up", "fade": "sn-fade-in", "scale": "sn-scale-in", "slide-right": "" };
+  const keyframes: Record<string, string> = {
+    "slide-up": "sn-slide-up",
+    "fade": "sn-fade",
+    "scale": "sn-scale-in",
+    "slide-right": "sn-slide-right",
+  };
 
   return (
     <div
       ref={ref}
-      className={`${className}`}
+      className={className}
       style={{
         opacity: visible ? undefined : 0,
-        animation: visible ? `${animMap[animation] === "" ? "sn-slide-up" : animMap[animation].replace("sn-", "")} 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms both` : undefined,
+        animation: visible
+          ? `${keyframes[animation]} 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms both`
+          : undefined,
       }}
     >
       {children}

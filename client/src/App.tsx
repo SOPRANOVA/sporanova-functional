@@ -24,6 +24,10 @@ import Data from "./pages/Data";
 import Analytics from "./pages/Analytics";
 import Automations from "./pages/Automations";
 import Settings from "./pages/Settings";
+import Decisions from "./pages/Decisions";
+import Memory from "./pages/Memory";
+import Activity from "./pages/Activity";
+import Workspace from "./pages/Workspace";
 import NotFound from "./pages/NotFound";
 
 function PageTransitionWrapper() {
@@ -71,10 +75,14 @@ const router = createBrowserRouter([
           { index: true, Component: Dashboard },
           { path: "dashboard", Component: Dashboard },
           { path: "intelligence", Component: Intelligence },
+          { path: "decisions", Component: Decisions },
           { path: "agents", Component: Agents },
           { path: "data", Component: Data },
+          { path: "memory", Component: Memory },
           { path: "analytics", Component: Analytics },
           { path: "automations", Component: Automations },
+          { path: "activity", Component: Activity },
+          { path: "workspace", Component: Workspace },
           { path: "settings", Component: Settings },
         ],
       },

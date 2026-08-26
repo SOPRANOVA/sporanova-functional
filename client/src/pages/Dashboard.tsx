@@ -1,5 +1,6 @@
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { AlertCircle, ArrowUpRight, Bot, Database, Lightbulb, RefreshCw, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 
@@ -14,6 +15,7 @@ function relativeTime(value: Date | string | null) {
 
 export default function Dashboard() {
   const { workspaceId, workspace } = useWorkspace();
+  const { user } = useAuth();
   const overview = trpc.dashboard.overview.useQuery({ workspaceId: workspaceId ?? 0, range: "1Y" }, { enabled: Boolean(workspaceId) });
   const data = overview.data;
   const cards = [
@@ -26,7 +28,7 @@ export default function Dashboard() {
   if (overview.error) return <ErrorPanel onRetry={() => overview.refetch()} />;
   return <div className="space-y-5 animate-in fade-in duration-300">
     <div className="flex flex-wrap items-end justify-between gap-3">
-      <div><p className="sn-label mb-2">Overview</p><h1 className="text-2xl font-medium">Welcome to {workspace?.workspace.name}</h1><p className="mt-1 text-sm text-[#8C887F]">Your enterprise intelligence updates from actual workspace activity.</p></div>
+      <div><p className="sn-label mb-2">Command Center</p><h1 className="text-2xl font-medium">Good morning, {user?.name?.split(" ")[0] || workspace?.workspace.name || "there"}.</h1><p className="mt-1 text-sm text-[#8C887F]">Here's what matters across your business today.</p></div>
       <button onClick={() => overview.refetch()} className="inline-flex items-center gap-2 rounded-xl bg-[#FAFAF8] px-3 py-2 text-xs font-medium text-[#6B6660] ring-1 ring-[#E8E6E2] transition hover:bg-[#F4F3F0]"><RefreshCw size={14} className={overview.isFetching ? "animate-spin" : ""} />Refresh</button>
     </div>
     <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{cards.map(card => <div key={card.label} className="rounded-2xl border border-[#E8E6E2] bg-[#FAFAF8] p-5"><card.icon size={16} className="mb-4 text-[#6B7FBF]" /><p className="sn-label">{card.label}</p><p className="mt-2 text-2xl font-medium">{overview.isLoading ? "…" : card.value}</p></div>)}</div>
