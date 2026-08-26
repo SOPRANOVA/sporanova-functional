@@ -57,3 +57,14 @@
 - [x] اختبار endpoint الفيديو المرفوع وfallback عند فشل تحميله، مع التأكد من بقاء canvas motion كبديل عبر onError وطبقة canvas المستقلة.
 - [x] التحقق من تطبيق PageTransition على جميع public routes وتوثيقها؛ App.tsx يلف index وplatform وintelligence وagents وsolutions وenterprise وabout وcontact وauth routes.
 - [x] إعادة تشغيل pnpm check وpnpm test وpnpm build بعد proxy/video ثم حفظ checkpoint جديد.
+
+- [x] إضافة أزرار تحكم سينمائية اختيارية لفيديو Hero: تشغيل/إيقاف، كتم/صوت، وشريط تقدم متاح بلوحة المفاتيح.
+- [ ] إنشاء فيديو توضيحي لقسم Platform وفيديو توضيحي لقسم Intelligence بنفس هوية SOPRANOVA.
+- [ ] دمج الفيديوهات التوضيحية مع poster وfallback وlazy loading دون تغيير بنية النصوص الأساسية.
+- [ ] اختبار التحكم والوصول والاستجابة والأداء، ثم تشغيل الاختبارات وحفظ checkpoint منشور.
+
+- [ ] توليد فيديو Platform وفيديو Intelligence فعليًا عند تجدد حصة الفيديو، ثم رفعهما ودمجهما داخل الصفحات مع controls وfallback.
+
+- [x] تدقيق ومطابقة عائلات الخطوط والأوزان والمسافات والـ line-height في جميع الصفحات العامة والمحمية مع Figma.
+- [x] إكمال عناصر التحكم السينمائية المرئية لفيديو Hero مع بقاء الفيديوهات التوضيحية المؤجلة إلى مرحلة لاحقة.
+- [x] مراجعة motion والـ responsive states في كل الصفحات العامة والمحمية، ثم اختبار وحفظ checkpoint.

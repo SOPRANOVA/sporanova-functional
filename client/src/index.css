@@ -26,6 +26,8 @@
 
 html {
   font-family: 'Inter', system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
 }
@@ -33,8 +35,14 @@ html {
 body {
   background-color: #FAFAF8;
   color: #1A1F3C;
+  font-family: 'Inter', system-ui, sans-serif;
   margin: 0;
   padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
 }
 
 @media (prefers-reduced-motion: reduce) {
