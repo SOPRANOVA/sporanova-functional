@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router";
 import Logo from "../../components/Logo";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 const navItems = [
   { href: "/app/dashboard", label: "Command Center", icon: (
@@ -34,6 +35,8 @@ export default function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const { user, logout } = useAuth();
+  const initials = (user?.name || "SN").split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 
   const isActive = (href: string) => location.pathname === href;
 
@@ -59,7 +62,7 @@ export default function AppLayout() {
 
         {/* Nav */}
         <nav className="flex-1 py-4 overflow-y-auto">
-          {navItems.map((item) => {
+          {navItems.filter((item) => !["Workspace", "Settings"].includes(item.label)).map((item) => {
             const active = isActive(item.href);
             return (
               <Link
@@ -97,6 +100,15 @@ export default function AppLayout() {
             );
           })}
         </nav>
+
+        <div className="border-t border-sn-100 p-2">
+          {navItems.filter((item) => ["Workspace", "Settings"].includes(item.label)).map((item) => {
+            const active = isActive(item.href);
+            return <Link key={item.href} to={item.href} title={collapsed ? item.label : undefined} className="mb-0.5 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all" style={{ background: active ? "#F0EFF8" : "transparent", color: active ? "#5B6FA8" : "#8C887F" }}><span style={{ flexShrink: 0 }}>{item.icon}</span>{!collapsed && <span className="whitespace-nowrap">{item.label}</span>}</Link>;
+          })}
+          <button type="button" onClick={() => { void logout().then(() => window.location.assign("/login")); }} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all" style={{ color: "#8C887F" }}><span aria-hidden="true" style={{ fontFamily: "monospace", fontSize: "1rem" }}>⊗</span>{!collapsed && "Sign out"}</button>
+        </div>
+        {!collapsed && <div className="border-t border-sn-100 p-3"><Link to="/app/settings" className="flex items-center gap-2.5 rounded-xl px-2 py-2"><div className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-semibold" style={{ background: "#1A1F3C", color: "#F8F6F2" }}>{initials}</div><div className="min-w-0"><div className="truncate text-xs font-medium">{user?.name || "Enterprise User"}</div><div className="truncate text-[10px]" style={{ color: "#8C887F" }}>{user?.email || ""}</div></div></Link></div>}
 
         {/* Collapse toggle */}
         <div className="border-t border-sn-100 p-3">
