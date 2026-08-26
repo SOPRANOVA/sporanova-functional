@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, ReactNode } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 
 interface AnimatedSectionProps {
   children: ReactNode;
@@ -10,22 +10,39 @@ interface AnimatedSectionProps {
 export default function AnimatedSection({ children, className = "", delay = 0, animation = "slide-up" }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || reducedMotion) {
+      setVisible(true);
+      return;
+    }
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
-      { threshold: 0.1 }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6%" },
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [reducedMotion]);
 
   const keyframes: Record<string, string> = {
     "slide-up": "sn-slide-up",
-    "fade": "sn-fade",
-    "scale": "sn-scale-in",
+    fade: "sn-fade",
+    scale: "sn-scale-in",
     "slide-right": "sn-slide-right",
   };
 
@@ -34,10 +51,8 @@ export default function AnimatedSection({ children, className = "", delay = 0, a
       ref={ref}
       className={className}
       style={{
-        opacity: visible ? undefined : 0,
-        animation: visible
-          ? `${keyframes[animation]} 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms both`
-          : undefined,
+        opacity: visible || reducedMotion ? 1 : 0,
+        animation: !reducedMotion && visible ? `${keyframes[animation]} 0.72s cubic-bezier(0.23, 1, 0.32, 1) ${delay}ms both` : undefined,
       }}
     >
       {children}

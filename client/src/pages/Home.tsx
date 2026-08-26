@@ -12,6 +12,7 @@ function HeroVisual() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let t = 0;
 
     const nodes = Array.from({ length: 18 }, () => ({
@@ -26,7 +27,7 @@ function HeroVisual() {
 
     function draw() {
       if (!canvas) return;
-      const W = canvas.width, H = canvas.height;
+      const W = canvas.offsetWidth, H = canvas.offsetHeight;
       ctx.clearRect(0, 0, W, H);
       t += 0.008;
       nodes.forEach((n) => {
@@ -70,14 +71,14 @@ function HeroVisual() {
       ctx.fillStyle = grd; ctx.fill();
       ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(107,127,191,0.7)"; ctx.fill();
-      animRef.current = requestAnimationFrame(draw);
+      if (!reducedMotion) animRef.current = requestAnimationFrame(draw);
     }
 
     function resize() {
       if (!canvas) return;
       canvas.width = canvas.offsetWidth * devicePixelRatio;
       canvas.height = canvas.offsetHeight * devicePixelRatio;
-      ctx.scale(devicePixelRatio, devicePixelRatio);
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
     }
     resize();
     window.addEventListener("resize", resize);
@@ -85,7 +86,19 @@ function HeroVisual() {
     return () => { cancelAnimationFrame(animRef.current); window.removeEventListener("resize", resize); };
   }, []);
 
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ opacity: 0.65 }} />;
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ opacity: 0.82 }} aria-hidden="true" />;
+}
+
+function MotionBackdrop() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+      <div className="absolute left-1/2 top-[46%] h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-sn-accent/10" style={{ animation: "sn-spin-slow 28s linear infinite" }} />
+      <div className="absolute left-1/2 top-[46%] h-[24rem] w-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-sn-blue/10" style={{ animation: "sn-spin-slow 22s linear infinite reverse" }} />
+      <div className="absolute left-[49%] top-[45%] h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sn-accent/10 blur-3xl" style={{ animation: "sn-pulse-soft 4.8s ease-in-out infinite" }} />
+      <div className="absolute right-[18%] top-[26%] h-2 w-2 rounded-full bg-sn-teal/35" style={{ animation: "sn-float 5s ease-in-out infinite" }} />
+      <div className="absolute left-[26%] bottom-[24%] h-1.5 w-1.5 rounded-full bg-sn-blue/30" style={{ animation: "sn-float 6.5s ease-in-out infinite reverse" }} />
+    </div>
+  );
 }
 
 const capabilities = [
@@ -109,10 +122,16 @@ const trustedBy = ["Meridian Financial", "Atlas Corp", "Nexus Capital", "Vantage
 export default function Home() {
   const [activeCapability, setActiveCapability] = useState(0);
   const [heroVisible, setHeroVisible] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setHeroVisible(true), 100);
-    return () => clearTimeout(t);
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => setReducedMotion(media.matches);
+    updateMotionPreference();
+    media.addEventListener("change", updateMotionPreference);
+    return () => { clearTimeout(t); media.removeEventListener("change", updateMotionPreference); };
   }, []);
 
   return (
@@ -122,6 +141,20 @@ export default function Home() {
       {/* Hero */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(107,127,191,0.06) 0%, transparent 70%)" }} />
+        {!videoFailed && (
+          <video
+            className="absolute inset-0 h-full w-full object-cover opacity-[0.18] mix-blend-multiply"
+            autoPlay={!reducedMotion}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+            onError={() => setVideoFailed(true)}
+            src="/manus-storage/sopranova-intelligence-loop_4515574a.mp4"
+          />
+        )}
+        <MotionBackdrop />
         <HeroVisual />
         <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16"
           style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(20px)", transition: "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)" }}>
@@ -173,7 +206,7 @@ export default function Home() {
 
       {/* Capabilities */}
       <section className="py-24 max-w-7xl mx-auto px-6">
-        <AnimatedSection>
+        <AnimatedSection animation="slide-up" delay={100}>
           <div className="sn-label mb-4">Platform Capabilities</div>
           <div className="flex flex-col lg:flex-row gap-16">
             <div className="lg:w-1/2">
@@ -223,7 +256,7 @@ export default function Home() {
       {/* Metrics */}
       <section className="py-16 border-y border-sn-100">
         <div className="max-w-7xl mx-auto px-6">
-          <AnimatedSection>
+          <AnimatedSection animation="fade" delay={200}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {metrics.map((m) => (
                 <div key={m.label} className="text-center">
@@ -238,7 +271,7 @@ export default function Home() {
 
       {/* How it works */}
       <section className="py-24 max-w-7xl mx-auto px-6">
-        <AnimatedSection>
+        <AnimatedSection animation="slide-up" delay={100}>
           <div className="text-center mb-16">
             <div className="sn-label mb-4">Intelligence System</div>
             <h2 className="sn-display" style={{ fontSize: "clamp(1.8rem, 3vw, 2.75rem)", color: "#1A1F3C" }}>From data to decision</h2>
@@ -267,7 +300,7 @@ export default function Home() {
       {/* CTA */}
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-6">
-          <AnimatedSection>
+          <AnimatedSection animation="scale" delay={150}>
             <div className="rounded-3xl p-12 md:p-16 text-center relative overflow-hidden" style={{ background: "#1A1F3C" }}>
               <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 80% at 50% 50%, rgba(107,127,191,0.15) 0%, transparent 70%)" }} />
               <div className="relative">

@@ -15,6 +15,23 @@ async function startServer() {
   app.use(express.json({ limit: "12mb" }));
   app.use(express.urlencoded({ limit: "12mb", extended: false }));
   registerOAuthRoutes(app);
+  app.get("/manus-storage/:key(*)", async (req, res) => {
+    const key = String(req.params.key ?? "").replace(/^\/+/, "");
+    const forgeBaseUrl = (process.env.BUILT_IN_FORGE_API_URL ?? "").replace(/\/+$/, "");
+    const forgeKey = process.env.BUILT_IN_FORGE_API_KEY;
+    if (!key || !forgeBaseUrl || !forgeKey) return res.status(404).end();
+    try {
+      const presignUrl = new URL("v1/storage/presign/get", `${forgeBaseUrl}/`);
+      presignUrl.searchParams.set("path", key);
+      const response = await fetch(presignUrl, { headers: { Authorization: `Bearer ${forgeKey}` } });
+      if (!response.ok) return res.status(502).end();
+      const payload = await response.json() as { url?: string };
+      if (!payload.url) return res.status(502).end();
+      return res.redirect(307, payload.url);
+    } catch {
+      return res.status(502).end();
+    }
+  });
   app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", process.env.APP_ORIGIN ?? "http://localhost:3000");
     res.setHeader("Vary", "Origin");

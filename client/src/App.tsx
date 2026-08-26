@@ -4,7 +4,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
-import { createBrowserRouter, Navigate, Outlet, RouterProvider, useLocation } from "react-router";
+import { createBrowserRouter, Navigate, Outlet, RouterProvider } from "react-router";
 import Home from "./pages/Home";
 import Platform from "./pages/Platform";
 import IntelligencePublic from "./pages/IntelligencePublic";
@@ -29,13 +29,13 @@ import Memory from "./pages/Memory";
 import Activity from "./pages/Activity";
 import Workspace from "./pages/Workspace";
 import NotFound from "./pages/NotFound";
+import PageTransition from "./components/PageTransition";
 
 function PageTransitionWrapper() {
-  const location = useLocation();
   return (
-    <div key={location.pathname} className="sn-page-enter" style={{ minHeight: "100vh" }}>
+    <PageTransition>
       <Outlet />
-    </div>
+    </PageTransition>
   );
 }
 

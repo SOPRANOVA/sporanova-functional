@@ -44,3 +44,16 @@
 - [x] إنهاء دليل النشر المستقل وتقرير التنفيذ النهائي مع توضيح المتطلبات البيئية والتشغيلية.
 - [x] إزالة مسار /__dev/seed-login المؤقت وأي اعتماد عليه في التحقق النهائي.
 - [x] تحديث حالة التدقيق المرئي المحمي بعد اكتمال مراجعة Analytics وAutomations وDecisions وMemory وActivity وWorkspace وSettings.
+
+- [x] تحليل motion والفيديوهات في مصدر Figma وتحديد مواضع hero/product moments المطلوبة.
+- [x] إضافة motion system مطابق لإيقاع Figma مع دعم prefers-reduced-motion.
+- [x] إنشاء/إضافة فيديو hero بصيغة web-friendly وتخزينه خارج مجلد المشروع؛ لم يضف المصدر الأصلي فيديوهات product moments.
+- [x] دمج فيديو hero والانتقالات في الصفحات العامة دون تغيير النصوص أو الهوية البصرية.
+- [x] التحقق بصريًا من الحركة والتنسيق على desktop وmobile ثم تشغيل الاختبارات وحفظ checkpoint.
+
+- [x] تنفيذ فيديو hero أصلي من تصميم SOPRANOVA ودمجه فعليًا في الصفحة العامة بدل الاكتفاء بـ canvas motion.
+- [x] مطابقة توقيت الفيديو وطبقات الحركة مع أسلوب Figma والتحقق من fallback عند تعذر تشغيل الفيديو.
+
+- [x] اختبار endpoint الفيديو المرفوع وfallback عند فشل تحميله، مع التأكد من بقاء canvas motion كبديل عبر onError وطبقة canvas المستقلة.
+- [x] التحقق من تطبيق PageTransition على جميع public routes وتوثيقها؛ App.tsx يلف index وplatform وintelligence وagents وsolutions وenterprise وabout وcontact وauth routes.
+- [x] إعادة تشغيل pnpm check وpnpm test وpnpm build بعد proxy/video ثم حفظ checkpoint جديد.
