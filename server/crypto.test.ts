@@ -12,6 +12,7 @@ describe("external source configuration encryption", () => {
   it("rejects a tampered encrypted payload", () => {
     process.env.DATA_ENCRYPTION_KEY = "test-key-for-source-config-encryption";
     const encrypted = encryptJson({ endpoint: "https://api.example.test" });
-    expect(() => decryptJson({ ...encrypted, ciphertext: `${encrypted.ciphertext.slice(0, -1)}A` })).toThrow();
+    const tamperedCiphertext = `${encrypted.ciphertext.startsWith("A") ? "B" : "A"}${encrypted.ciphertext.slice(1)}`;
+    expect(() => decryptJson({ ...encrypted, ciphertext: tamperedCiphertext })).toThrow();
   });
 });

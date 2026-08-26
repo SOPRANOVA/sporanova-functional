@@ -93,16 +93,18 @@ body {
   from { stroke-dashoffset: 1000; }
   to   { stroke-dashoffset: 0; }
 }
-
-@keyframes sn-node-pop {
-  0%   { opacity: 0; transform: scale(0); }
-  70%  { transform: scale(1.1); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
 @keyframes sn-orbit {
   from { transform: rotate(0deg) translateX(60px) rotate(0deg); }
   to   { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+@keyframes sn-writing {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+@keyframes sn-node-pop {
+  0%   { opacity: 0; transform: scale(0.8); }
+  60%  { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 @keyframes sn-data-flow {
@@ -112,20 +114,9 @@ body {
   100% { opacity: 0; transform: translateY(40px); }
 }
 
-@keyframes sn-writing {
-  from { width: 0; }
-  to   { width: 100%; }
-}
-
 @keyframes sn-spin-slow {
   from { transform: translate(-50%, -50%) rotate(0deg); }
   to   { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-@keyframes sn-node-pop {
-  0%   { opacity: 0; transform: scale(0.8); }
-  60%  { opacity: 1; transform: scale(1.04); }
-  100% { opacity: 1; transform: scale(1); }
 }
 
 .sn-page-enter { animation: sn-reveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
