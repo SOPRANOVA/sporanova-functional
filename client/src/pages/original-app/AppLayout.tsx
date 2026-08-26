@@ -187,7 +187,7 @@ export default function AppLayout() {
             {/* Avatar */}
             <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold cursor-pointer"
               style={{ background: "#1A1F3C", color: "#F8F6F2" }}>
-              JR
+              {initials}
             </div>
           </div>
         </div>
