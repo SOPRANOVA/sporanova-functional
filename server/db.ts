@@ -1,4 +1,4 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { nanoid } from "nanoid";
 import {
@@ -82,6 +82,24 @@ export async function listWorkspacesForUser(userId: number) {
     .innerJoin(workspaces, eq(memberships.workspaceId, workspaces.id))
     .innerJoin(organizations, eq(workspaces.organizationId, organizations.id))
     .where(and(eq(memberships.userId, userId), eq(memberships.isActive, true), isNull(workspaces.deletedAt), isNull(organizations.deletedAt)));
+}
+
+export async function listWorkspaceMembers(workspaceId: number) {
+  const db = await requireDb();
+  return db
+    .select({
+      userId: users.id,
+      name: users.name,
+      email: users.email,
+      avatarUrl: users.avatarUrl,
+      role: memberships.role,
+      isActive: memberships.isActive,
+      joinedAt: memberships.createdAt,
+    })
+    .from(memberships)
+    .innerJoin(users, eq(memberships.userId, users.id))
+    .where(and(eq(memberships.workspaceId, workspaceId), eq(memberships.isActive, true)))
+    .orderBy(asc(memberships.createdAt));
 }
 
 function slugify(value: string) {

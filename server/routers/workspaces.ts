@@ -2,7 +2,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { organizations, userPreferences, users, workspaces } from "../../drizzle/schema";
 import { workspaceManagerProcedure, workspaceProcedure } from "../authz";
-import { bootstrapWorkspace, listWorkspacesForUser, requireDb, writeAuditLog } from "../db";
+import { bootstrapWorkspace, listWorkspaceMembers, listWorkspacesForUser, requireDb, writeAuditLog } from "../db";
 import { protectedProcedure, router } from "../_core/trpc";
 
 const workspaceIdInput = z.object({ workspaceId: z.number().int().positive() });
@@ -19,6 +19,8 @@ export const workspacesRouter = router({
     const items = await listWorkspacesForUser(ctx.user.id);
     return items.find(item => item.workspace.id === ctx.workspaceId) ?? null;
   }),
+
+  members: workspaceProcedure.input(workspaceIdInput).query(({ ctx }) => listWorkspaceMembers(ctx.workspaceId)),
 
   completeOnboarding: workspaceManagerProcedure
     .input(
