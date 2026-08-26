@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
+import usePrefersReducedMotion from "../hooks/usePrefersReducedMotion";
 
 interface AnimatedSectionProps {
   children: ReactNode;
@@ -10,15 +11,7 @@ interface AnimatedSectionProps {
 export default function AnimatedSection({ children, className = "", delay = 0, animation = "slide-up" }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReducedMotion(media.matches);
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
+  const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     const el = ref.current;

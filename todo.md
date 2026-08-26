@@ -65,6 +65,9 @@
 
 - [ ] توليد فيديو Platform وفيديو Intelligence فعليًا عند تجدد حصة الفيديو، ثم رفعهما ودمجهما داخل الصفحات مع controls وfallback.
 
+- [x] تجهيز حاويات الفيديو التوضيحية في صفحتي Platform وIntelligence عبر مكوّن ExplainerVideo مع poster وfallback متحرك بنفس هوية الحركة وlazy loading وتحكم تشغيل/إيقاف متاح بلوحة المفاتيح ودعم prefers-reduced-motion؛ الأصول الفعلية ما زالت مؤجلة حتى تجدد حصة توليد الفيديو.
+- [x] توحيد منطق prefers-reduced-motion في hook مشترك (usePrefersReducedMotion) مستخدم في PageTransition وAnimatedSection وHero وExplainerVideo، مع تهيئة متزامنة تمنع وميض autoplay لمستخدمي تقليل الحركة، وإيقاف فيديو Hero فورًا عند تفعيل تقليل الحركة أثناء الجلسة، وعزل حالة الفيديو في HeroVideoLayer لمنع إعادة رسم الصفحة كاملة عند تحديث التقدم، وإضافة حالة تركيز مرئية لشريط تقدم Hero؛ تم التحقق عبر pnpm check/test/build واستجابة 200 لصفحتي platform وintelligence (تحقق بصري كامل desktop/mobile يتطلب جلسة متصفح).
+
 - [x] تدقيق ومطابقة عائلات الخطوط والأوزان والمسافات والـ line-height في جميع الصفحات العامة والمحمية مع Figma.
 - [x] إكمال عناصر التحكم السينمائية المرئية لفيديو Hero مع بقاء الفيديوهات التوضيحية المؤجلة إلى مرحلة لاحقة.
 - [x] مراجعة motion والـ responsive states في كل الصفحات العامة والمحمية، ثم اختبار وحفظ checkpoint.

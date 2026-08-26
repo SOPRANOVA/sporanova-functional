@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import PublicNav from "../components/PublicNav";
 import AnimatedSection from "../components/AnimatedSection";
+import ExplainerVideo from "../components/ExplainerVideo";
 import Logo from "../components/Logo";
 
 const layers = [
@@ -24,6 +25,15 @@ export default function Platform() {
           <p className="text-lg leading-relaxed mb-16" style={{ color: "#6B6660", maxWidth: "560px" }}>
             SOPRANOVA is not a tool. It is a platform — a continuous intelligence layer that sits above your data, your teams, and your systems, turning information into decisions at the speed of business.
           </p>
+        </AnimatedSection>
+
+        {/* Platform explainer film container — asset pending generation */}
+        <AnimatedSection className="mb-24" delay={140}>
+          <ExplainerVideo
+            label="Platform Film"
+            title="Every stream of enterprise data, organized into one operating layer."
+            description="A look at how SOPRANOVA receives structured, unstructured, and real-time signals and turns them into a single, ordered system of record."
+          />
         </AnimatedSection>
 
         {/* Platform diagram */}

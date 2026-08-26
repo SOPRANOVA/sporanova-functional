@@ -1,20 +1,13 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useLocation } from "react-router";
+import usePrefersReducedMotion from "../hooks/usePrefersReducedMotion";
 
 export default function PageTransition({ children }: { children: ReactNode }) {
   const location = useLocation();
   const [displayChildren, setDisplayChildren] = useState(children);
   const [transitioning, setTransitioning] = useState(false);
   const [key, setKey] = useState(0);
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReducedMotion(media.matches);
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
+  const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     if (reducedMotion) {
