@@ -35,7 +35,7 @@ function responseText(content: unknown) {
   return "";
 }
 
-function normalizedRecords(value: unknown) {
+export function normalizedRecords(value: unknown) {
   const list = Array.isArray(value) ? value : Array.isArray((value as { data?: unknown[] } | null)?.data) ? (value as { data: unknown[] }).data : [value];
   return list.slice(0, 1000).map((item, index) => {
     const payload: Record<string, unknown> = item && typeof item === "object" && !Array.isArray(item) ? item as Record<string, unknown> : { value: item };
