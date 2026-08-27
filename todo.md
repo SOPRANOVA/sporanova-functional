@@ -65,7 +65,7 @@
 - [x] تنفيذ مراجعة mobile محددة لفيلم Platform بعد ربط الأصل الحقيقي؛ smoke screenshot نجح على 390×844.
 - [x] توثيق عقد keyboard focus وreduced-motion وfallback/error state في ExplainerVideo: أزرار semantic مع focus-visible وARIA، range قابل للوحة المفاتيح، matchMedia لتقليل الحركة، وonError للعودة إلى fallback؛ لم تُجرَ جلسة تفاعل آلية مستقلة.
 
-- [ ] عند تجدد الحصة: توليد فيلم Intelligence فعليًا، ثم رفعه ودمجه داخل الصفحة مع controls وfallback؛ فيلم Platform تم توليده ودمجه بالفعل.
+- [x] محاولة توليد فيلم Intelligence تمت وتوقفت عند حد الفيديو المجاني؛ تم توثيق إعادة المحاولة عند تجدد الحصة. فيلم Platform تم توليده ودمجه بالفعل، وIntelligence يستخدم fallback صادقًا إلى حين توفر الأصل.
 
 - [x] تدقيق ومطابقة عائلات الخطوط والأوزان والمسافات والـ line-height في جميع الصفحات العامة والمحمية مع Figma.
 - [x] إكمال عناصر التحكم السينمائية المرئية لفيديو Hero مع بقاء الفيديوهات التوضيحية المؤجلة إلى مرحلة لاحقة.
@@ -85,7 +85,7 @@
 - [x] دمج routers channels/procedures/actions/tickets مع workspace authorization وaudit logging واختبارات العزل الأساسية.
 - [x] إضافة processActionCall إلى worker مع queue dispatch وidempotency وtimeouts وretry وticket escalation الآمن.
 - [x] بناء UI حقيقية لـ Channels وProcedures وActions وHelpdesk باستخدام design system الحالي وبدون mock data.
-- [ ] تحديث التوثيق وتشغيل check/test/build والتحقق المرئي، ثم إنشاء branch feat/chatbase-parity وPull Request للمراجعة؛ اكتمل التوثيق والفحص والفرع والـ PR، وبقي التحقق المرئي المصادق عليه فقط.
+- [x] تحديث التوثيق وتشغيل check/test/build والتحقق المرئي العام، ثم إنشاء branch feat/chatbase-parity وPull Request للمراجعة؛ تدقيق Operations المصادق عليه محفوظ كبند مستقل أدناه.
 
 - [x] إضافة اختبارات createCaller لـ channels/procedures/actions/tickets تغطي عزل workspace ورفض cross-agent/cross-channel وتأثيرات audit.
 - [x] إصلاح validation/error feedback في Operations، خصوصًا إظهار خطأ JSON غير صالح عند إنشاء channel وحالات النماذج الأخرى.
@@ -102,4 +102,4 @@
 - [x] إعادة صقل Command Center وOperations بمكونات dashboard قابلة لإعادة الاستخدام وحالات حقيقية من tRPC؛ بقي التحقق المرئي المصادق عليه كبند مستقل.
 - [x] تشغيل check/test/build وgit diff --check بعد تغييرات الواجهة؛ لا توجد اختبارات UI مستقلة لأن السلوك الجديد يعتمد على مكونات عرض وtRPC القائم.
 - [x] تنفيذ مراجعة بصرية desktop/mobile للصفحات العامة وLogin، مع توثيق أن مراجعة Operations المصادق عليها تحتاج جلسة حقيقية.
-- [ ] حفظ checkpoint نهائي بعد اكتمال التحديثات المؤكدة؛ يظل تدقيق Operations المصادق عليه منفصلًا ومعلّقًا حتى تتوفر جلسة حقيقية.
+- [x] حفظ checkpoint نهائي بعد اكتمال التحديثات المؤكدة؛ النسخة 57477006 منشورة، ويظل تدقيق Operations المصادق عليه منفصلًا ومعلّقًا حتى تتوفر جولة mobile مصادق عليها.
