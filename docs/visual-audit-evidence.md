@@ -28,3 +28,9 @@
 ## Operations verification status
 
 تم تنفيذ `/app/operations` بصفحات Channels وProcedures وActions وHelpdesk مع workspace-scoped tRPC، حالات loading/error/empty، ورسائل validation مرئية في dialogs. تعذر إغلاق التحقق المرئي المصادق عليه لهذه الصفحة على desktop/mobile في جلسة sandbox الحالية لأن صفحة `/app/operations` تعيد إلى Login ولا تتوفر جلسة مستخدم قابلة لـ takeover. يجب إعادة هذه الجولة بعد تسجيل دخول حقيقي في بيئة المراجعة.
+
+## 2026-08-27 — Kimi-inspired Operations audit
+
+- The connected browser reached `/app/operations` with the authenticated Development Owner session.
+- The updated Operations layout rendered successfully: control-layer heading, workspace-scoped status, four live count blocks, agent-context selector, tabbed Channels/Procedures/Actions/Helpdesk navigation, and an honest `Workspace unavailable` empty state because no workspace was selected in this session.
+- A follow-up browser view timed out, so no destructive or sensitive interaction was attempted. Authenticated CRUD-state verification remains limited to the rendered empty state; no mock records were introduced.

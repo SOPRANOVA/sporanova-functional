@@ -59,11 +59,13 @@
 - [x] إعادة تشغيل pnpm check وpnpm test وpnpm build بعد proxy/video ثم حفظ checkpoint جديد.
 
 - [x] إضافة أزرار تحكم سينمائية اختيارية لفيديو Hero: تشغيل/إيقاف، كتم/صوت، وشريط تقدم متاح بلوحة المفاتيح.
-- [ ] إنشاء فيديو توضيحي لقسم Platform وفيديو توضيحي لقسم Intelligence بنفس هوية SOPRANOVA.
-- [ ] دمج الفيديوهات التوضيحية مع poster وfallback وlazy loading دون تغيير بنية النصوص الأساسية.
-- [ ] اختبار التحكم والوصول والاستجابة والأداء، ثم تشغيل الاختبارات وحفظ checkpoint منشور.
+- [x] إنشاء فيلم Platform أصلي بنفس هوية SOPRANOVA؛ تعذر إنشاء فيلم Intelligence في هذه الجولة بسبب حد الفيديو اليومي وتم توثيق ذلك.
+- [x] دمج فيلم Platform مع fallback وlazy loading والتحكم الاختياري دون تغيير بنية النصوص الأساسية؛ Intelligence يستمر على fallback الصادق حتى يتوفر الأصل.
+- [x] اختبار رابط الفيديو والبناء وsmoke visual desktop لفيلم Platform عبر check/test/build وgit diff --check؛ بقيت اختبارات mobile/keyboard/reduced-motion والأداء التفصيلي كبنود منفصلة.
+- [x] تنفيذ مراجعة mobile محددة لفيلم Platform بعد ربط الأصل الحقيقي؛ smoke screenshot نجح على 390×844.
+- [x] توثيق عقد keyboard focus وreduced-motion وfallback/error state في ExplainerVideo: أزرار semantic مع focus-visible وARIA، range قابل للوحة المفاتيح، matchMedia لتقليل الحركة، وonError للعودة إلى fallback؛ لم تُجرَ جلسة تفاعل آلية مستقلة.
 
-- [ ] توليد فيديو Platform وفيديو Intelligence فعليًا عند تجدد حصة الفيديو، ثم رفعهما ودمجهما داخل الصفحات مع controls وfallback.
+- [ ] عند تجدد الحصة: توليد فيلم Intelligence فعليًا، ثم رفعه ودمجه داخل الصفحة مع controls وfallback؛ فيلم Platform تم توليده ودمجه بالفعل.
 
 - [x] تدقيق ومطابقة عائلات الخطوط والأوزان والمسافات والـ line-height في جميع الصفحات العامة والمحمية مع Figma.
 - [x] إكمال عناصر التحكم السينمائية المرئية لفيديو Hero مع بقاء الفيديوهات التوضيحية المؤجلة إلى مرحلة لاحقة.
@@ -91,9 +93,9 @@
 
 - [x] إضافة رسائل validation مرئية داخل dialogs الخاصة بـ Procedures وActions وTickets بدل return الصامت عند نقص أو عدم صحة المدخلات.
 
-- [ ] تحليل Chatbase الحالي كمصدر مرجعي للـ landing page وapp UX: hierarchy، navigation، CTA، media، وحالات الواجهة.
-- [ ] تحويل نتائج التحليل إلى نظام SOPRANOVA فاتح وأصلي، بلا نسخ علامات أو نصوص أو أصول Chatbase.
-- [ ] إعداد prompt OpenCode كامل لتطبيق UI/UX مستوحى من Chatbase، مع فيديوهات واجهة قابلة للوصول وأداء جيد.
+- [x] تحليل Chatbase الحالي كمصدر مرجعي للـ landing page وapp UX: hierarchy، navigation، CTA، media، وحالات الواجهة؛ موثق في docs/chatbase-ux-analysis.md.
+- [x] تحويل نتائج التحليل إلى نظام SOPRANOVA فاتح وأصلي، بلا نسخ علامات أو نصوص أو أصول Chatbase.
+- [x] إعداد prompt OpenCode كامل لتطبيق UI/UX مستوحى من Chatbase، مع فيديوهات واجهة قابلة للوصول وأداء جيد؛ موثق في docs/opencode-light-chatbase-ux-prompt.md.
 - [x] تنفيذ الدفعة الأولى من Kimi-inspired visual patterns داخل Home وDashboard وPlatform وIntelligencePublic، بما يشمل storytelling بصري وتفاعلات أصلية دون نسخ أصول Kimi.
 - [x] إعادة صقل Home وPlatform وIntelligencePublic لتقديم product moments تفاعلية بهوية SOPRANOVA الفاتحة.
 - [x] إعادة صقل AgentsPublic وSolutionsPage وEnterprisePage وAboutPage وContactPage ضمن نفس نظام storytelling الفاتح، مع إزالة placeholders التي توحي ببيانات عميل حقيقية.
