@@ -532,3 +532,138 @@ export const auditLogs = mysqlTable(
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type WorkspaceRole = typeof memberships.$inferSelect.role;
+
+
+export const channels = mysqlTable(
+  "channels",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    workspaceId: int("workspaceId").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
+    agentId: int("agentId").notNull().references(() => agents.id, { onDelete: "cascade" }),
+    type: mysqlEnum("type", ["web_widget", "help_page", "email", "slack", "whatsapp", "api"]).notNull(),
+    label: varchar("label", { length: 160 }).notNull(),
+    status: mysqlEnum("status", ["active", "paused", "unconfigured"]).notNull().default("unconfigured"),
+    configuration: json("configuration").$type<Record<string, unknown>>(),
+    secretReference: varchar("secretReference", { length: 255 }),
+    createdById: int("createdById").notNull().references(() => users.id, { onDelete: "restrict" }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => [
+    uniqueIndex("channels_workspace_agent_label_unique").on(table.workspaceId, table.agentId, table.label),
+    index("channels_workspace_status_idx").on(table.workspaceId, table.status),
+    index("channels_agent_idx").on(table.agentId),
+  ],
+);
+
+export const actionDefinitions = mysqlTable(
+  "action_definitions",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    workspaceId: int("workspaceId").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
+    agentId: int("agentId").notNull().references(() => agents.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 160 }).notNull(),
+    kind: mysqlEnum("kind", ["http_api", "escalate_to_human", "search_knowledge", "create_ticket", "custom"]).notNull(),
+    procedureOnly: boolean("procedureOnly").notNull().default(false),
+    configuration: json("configuration").$type<Record<string, unknown>>(),
+    status: mysqlEnum("status", ["enabled", "disabled"]).notNull().default("enabled"),
+    createdById: int("createdById").notNull().references(() => users.id, { onDelete: "restrict" }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => [
+    uniqueIndex("action_definitions_workspace_agent_name_unique").on(table.workspaceId, table.agentId, table.name),
+    index("action_definitions_workspace_status_idx").on(table.workspaceId, table.status),
+    index("action_definitions_agent_idx").on(table.agentId),
+  ],
+);
+
+export const actionCalls = mysqlTable(
+  "action_calls",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    workspaceId: int("workspaceId").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
+    actionDefinitionId: int("actionDefinitionId").notNull().references(() => actionDefinitions.id, { onDelete: "cascade" }),
+    conversationId: int("conversationId").references(() => conversations.id, { onDelete: "set null" }),
+    channelId: int("channelId").references(() => channels.id, { onDelete: "set null" }),
+    status: mysqlEnum("status", ["pending", "running", "succeeded", "failed", "cancelled"]).notNull().default("pending"),
+    input: json("input").$type<Record<string, unknown>>().notNull(),
+    output: json("output").$type<Record<string, unknown>>(),
+    errorMessage: text("errorMessage"),
+    idempotencyKey: varchar("idempotencyKey", { length: 128 }),
+    startedAt: timestamp("startedAt"),
+    completedAt: timestamp("completedAt"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => [
+    uniqueIndex("action_calls_workspace_idempotency_unique").on(table.workspaceId, table.idempotencyKey),
+    index("action_calls_workspace_status_idx").on(table.workspaceId, table.status),
+    index("action_calls_action_created_idx").on(table.actionDefinitionId, table.createdAt),
+  ],
+);
+
+export const procedures = mysqlTable(
+  "procedures",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    workspaceId: int("workspaceId").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
+    agentId: int("agentId").notNull().references(() => agents.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 160 }).notNull(),
+    description: text("description"),
+    triggerPhrases: json("triggerPhrases").$type<string[]>().notNull(),
+    procedureOnly: boolean("procedureOnly").notNull().default(true),
+    status: mysqlEnum("status", ["draft", "active", "disabled"]).notNull().default("draft"),
+    createdById: int("createdById").notNull().references(() => users.id, { onDelete: "restrict" }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => [
+    uniqueIndex("procedures_workspace_agent_name_unique").on(table.workspaceId, table.agentId, table.name),
+    index("procedures_workspace_status_idx").on(table.workspaceId, table.status),
+    index("procedures_agent_idx").on(table.agentId),
+  ],
+);
+
+export const procedureSteps = mysqlTable(
+  "procedure_steps",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    procedureId: int("procedureId").notNull().references(() => procedures.id, { onDelete: "cascade" }),
+    workspaceId: int("workspaceId").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
+    position: int("position").notNull(),
+    instruction: text("instruction").notNull(),
+    actionDefinitionId: int("actionDefinitionId").references(() => actionDefinitions.id, { onDelete: "set null" }),
+    branchCondition: varchar("branchCondition", { length: 500 }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => [
+    uniqueIndex("procedure_steps_procedure_position_unique").on(table.procedureId, table.position),
+    index("procedure_steps_workspace_idx").on(table.workspaceId),
+  ],
+);
+
+export const tickets = mysqlTable(
+  "tickets",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    workspaceId: int("workspaceId").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
+    conversationId: int("conversationId").notNull().references(() => conversations.id, { onDelete: "cascade" }),
+    channelId: int("channelId").references(() => channels.id, { onDelete: "set null" }),
+    subject: varchar("subject", { length: 255 }).notNull(),
+    status: mysqlEnum("status", ["open", "pending", "resolved", "closed"]).notNull().default("open"),
+    priority: mysqlEnum("priority", ["low", "normal", "high", "urgent"]).notNull().default("normal"),
+    assigneeUserId: int("assigneeUserId").references(() => users.id, { onDelete: "set null" }),
+    escalationReason: varchar("escalationReason", { length: 160 }),
+    resolvedAt: timestamp("resolvedAt"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => [
+    index("tickets_workspace_status_idx").on(table.workspaceId, table.status),
+    index("tickets_workspace_priority_idx").on(table.workspaceId, table.priority),
+    index("tickets_conversation_idx").on(table.conversationId),
+    index("tickets_assignee_idx").on(table.assigneeUserId),
+  ],
+);

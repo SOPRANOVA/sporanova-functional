@@ -28,6 +28,7 @@ import Decisions from "./pages/Decisions";
 import Memory from "./pages/Memory";
 import Activity from "./pages/Activity";
 import Workspace from "./pages/Workspace";
+import Operations from "./pages/Operations";
 import NotFound from "./pages/NotFound";
 import PageTransition from "./components/PageTransition";
 
@@ -81,6 +82,7 @@ const router = createBrowserRouter([
           { path: "memory", Component: Memory },
           { path: "analytics", Component: Analytics },
           { path: "automations", Component: Automations },
+          { path: "operations", Component: Operations },
           { path: "activity", Component: Activity },
           { path: "workspace", Component: Workspace },
           { path: "settings", Component: Settings },

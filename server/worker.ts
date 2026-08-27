@@ -1,8 +1,10 @@
 import "dotenv/config";
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 import JSZip from "jszip";
 import {
+  actionCalls,
+  actionDefinitions,
   agentRuns,
   agents,
   dataRecords,
@@ -11,6 +13,7 @@ import {
   documentChunks,
   documents,
   notifications,
+  tickets,
   users,
   workflowNodes,
   workflowRuns,
@@ -163,6 +166,62 @@ export async function processDocument(payload: Record<string, unknown>) {
   }
 }
 
+export async function processActionCall(payload: Record<string, unknown>) {
+  const actionCallId = Number(payload.actionCallId);
+  const workspaceId = Number(payload.workspaceId);
+  if (!Number.isInteger(actionCallId) || !Number.isInteger(workspaceId)) throw new Error("Invalid action_call.execute job payload");
+  const db = await requireDb();
+  const actionCall = (await db.select().from(actionCalls).where(and(eq(actionCalls.id, actionCallId), eq(actionCalls.workspaceId, workspaceId))).limit(1))[0];
+  if (!actionCall || actionCall.status === "succeeded") return;
+  const action = (await db.select().from(actionDefinitions).where(and(eq(actionDefinitions.id, actionCall.actionDefinitionId), eq(actionDefinitions.workspaceId, workspaceId))).limit(1))[0];
+  if (!action || action.status === "disabled") throw new Error("Action is missing or disabled");
+  const claim = await db.update(actionCalls).set({ status: "running", startedAt: new Date(), errorMessage: null }).where(and(eq(actionCalls.id, actionCallId), eq(actionCalls.workspaceId, workspaceId), inArray(actionCalls.status, ["pending", "failed"])));
+  const claimResult = claim as unknown as { affectedRows?: number };
+  if (claimResult.affectedRows === 0) return;
+  try {
+    const input = actionCall.input ?? {};
+    let output: Record<string, unknown>;
+    if (action.kind === "http_api") {
+      const configuration = action.configuration ?? {};
+      const endpoint = typeof configuration.endpoint === "string" ? configuration.endpoint : "";
+      if (!/^https?:\/\//i.test(endpoint)) throw new Error("HTTP action requires an absolute HTTPS or HTTP endpoint");
+      const method = typeof configuration.method === "string" ? configuration.method.toUpperCase() : "POST";
+      const response = await fetch(endpoint, {
+        method,
+        headers: { "content-type": "application/json", ...(configuration.headers as Record<string, string> | undefined) },
+        body: method === "GET" || method === "HEAD" ? undefined : JSON.stringify(input),
+        signal: AbortSignal.timeout(15_000),
+      });
+      const text = (await response.text()).slice(0, 20_000);
+      if (!response.ok) throw new Error(`Action endpoint returned HTTP ${response.status}`);
+      output = { status: response.status, body: text };
+    } else if (action.kind === "escalate_to_human" || action.kind === "create_ticket") {
+      const conversationId = Number(actionCall.conversationId);
+      if (!Number.isInteger(conversationId)) throw new Error("Ticket action requires a conversation");
+      const subject = typeof input.subject === "string" && input.subject.trim() ? input.subject.trim().slice(0, 255) : action.name;
+      const priority = ["low", "normal", "high", "urgent"].includes(String(input.priority)) ? String(input.priority) as "low" | "normal" | "high" | "urgent" : "normal";
+      const created = await db.insert(tickets).values({
+        workspaceId,
+        conversationId,
+        channelId: actionCall.channelId,
+        subject,
+        priority,
+        escalationReason: typeof input.reason === "string" ? input.reason.slice(0, 160) : action.kind === "escalate_to_human" ? "Escalated by action" : "Ticket created by action",
+        status: "open",
+      });
+      output = { ticketId: Number(created[0].insertId), status: "open" };
+    } else {
+      throw new Error(`Action kind ${action.kind} is not executable yet`);
+    }
+    await db.update(actionCalls).set({ status: "succeeded", output, completedAt: new Date() }).where(and(eq(actionCalls.id, actionCallId), eq(actionCalls.workspaceId, workspaceId)));
+    await writeAuditLog({ workspaceId, actorUserId: null, action: "action_call.succeeded", resourceType: "action_call", resourceId: actionCallId, metadata: { actionDefinitionId: action.id, kind: action.kind } });
+  } catch (error) {
+    const message = error instanceof Error ? error.message.slice(0, 2000) : "Action execution failed";
+    await db.update(actionCalls).set({ status: "failed", errorMessage: message, completedAt: new Date() }).where(and(eq(actionCalls.id, actionCallId), eq(actionCalls.workspaceId, workspaceId)));
+    throw error;
+  }
+}
+
 export async function processWorkflowRun(payload: Record<string, unknown>) {
   const runId = Number(payload.runId); const workspaceId = Number(payload.workspaceId);
   if (!Number.isInteger(runId) || !Number.isInteger(workspaceId)) throw new Error("Invalid workflow.run job payload");
@@ -200,6 +259,7 @@ async function processOnce() {
     else if (job.type === "data-source.sync") await processDataSourceSync(job.payload);
     else if (job.type === "document.process") await processDocument(job.payload);
     else if (job.type === "workflow.run") await processWorkflowRun(job.payload);
+    else if (job.type === "action_call.execute") await processActionCall(job.payload);
     else throw new Error(`Unsupported job type: ${job.type}`);
     await completeJob(job.id);
   } catch (error) {

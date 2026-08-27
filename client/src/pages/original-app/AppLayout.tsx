@@ -24,6 +24,9 @@ const navItems = [
   { href: "/app/automations", label: "Automations", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M10 3l-1 4h4l-5 8 1-5H5l5-7z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/></svg>
   )},
+  { href: "/app/operations", label: "Operations", icon: (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 5h12M3 9h12M3 13h8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/><circle cx="13.5" cy="13" r="1.5" stroke="currentColor" strokeWidth="1.3"/></svg>
+  )},
   { href: "/app/activity", label: "Activity", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>◷</span> },
   { href: "/app/workspace", label: "Workspace", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>◈</span> },
   { href: "/app/settings", label: "Settings", icon: (

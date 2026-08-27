@@ -15,7 +15,7 @@ vi.mock("./email", () => ({ sendEmail: mocks.sendEmail }));
 vi.mock("./_core/llm", () => ({ invokeLLM: vi.fn() }));
 vi.mock("./_core/env", () => ({ ENV: { ai: { model: "test-model" } } }));
 
-import { processDataSourceSync, processDocument, processWorkflowRun } from "./worker";
+import { processActionCall, processDataSourceSync, processDocument, processWorkflowRun } from "./worker";
 
 function chain<T>(rows: T[]) {
   return {
@@ -94,6 +94,37 @@ describe("worker handler integration contracts", () => {
     expect(mocks.sendEmail).toHaveBeenCalledWith({ to: "owner@example.test", subject: "Revenue alert", text: "Revenue changed" });
     expect(update.mock.results.at(-1)?.value.set).toHaveBeenCalledWith(expect.objectContaining({ status: "completed", output: { executedNotificationNodes: [61], unsupportedNodes: [] } }));
     expect(mocks.writeAuditLog).toHaveBeenCalledWith(expect.objectContaining({ action: "workflow.run_completed", resourceId: 41 }));
+  });
+
+  it("executes an HTTP action, records bounded output, and audits completion", async () => {
+    const { update } = dbMock([
+      [{ id: 70, workspaceId: 7, actionDefinitionId: 71, status: "pending", input: { recordId: 9 }, channelId: null }],
+      [{ id: 71, workspaceId: 7, kind: "http_api", status: "enabled", name: "Sync record", configuration: { endpoint: "https://api.example.test/sync", method: "POST" } }],
+    ]);
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response('{"ok":true}', { status: 200 }));
+    await expect(processActionCall({ actionCallId: 70, workspaceId: 7 })).resolves.toBeUndefined();
+    expect(fetchMock).toHaveBeenCalledWith("https://api.example.test/sync", expect.objectContaining({ method: "POST", body: JSON.stringify({ recordId: 9 }) }));
+    expect(update.mock.results.at(-1)?.value.set).toHaveBeenCalledWith(expect.objectContaining({ status: "succeeded", output: { status: 200, body: '{"ok":true}' } }));
+    expect(mocks.writeAuditLog).toHaveBeenCalledWith(expect.objectContaining({ action: "action_call.succeeded", resourceId: 70 }));
+    fetchMock.mockRestore();
+  });
+
+  it("does not re-execute a succeeded action call", async () => {
+    const { db, update } = dbMock([[{ id: 72, workspaceId: 7, actionDefinitionId: 73, status: "succeeded", input: {} }]]);
+    await expect(processActionCall({ actionCallId: 72, workspaceId: 7 })).resolves.toBeUndefined();
+    expect(db.select).toHaveBeenCalledTimes(1);
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it("marks an HTTP action failed when the endpoint returns an error", async () => {
+    const { update } = dbMock([
+      [{ id: 74, workspaceId: 7, actionDefinitionId: 75, status: "pending", input: {} }],
+      [{ id: 75, workspaceId: 7, kind: "http_api", status: "enabled", name: "Failing action", configuration: { endpoint: "https://api.example.test/fail" } }],
+    ]);
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("nope", { status: 503 }));
+    await expect(processActionCall({ actionCallId: 74, workspaceId: 7 })).rejects.toThrow("HTTP 503");
+    expect(update.mock.results.at(-1)?.value.set).toHaveBeenCalledWith(expect.objectContaining({ status: "failed", errorMessage: "Action endpoint returned HTTP 503" }));
+    fetchMock.mockRestore();
   });
 
   it("fails workflow execution without inserting a notification when no action is supported", async () => {

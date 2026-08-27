@@ -71,3 +71,20 @@
 
 - [x] مزامنة آخر نسخة كاملة من SOPRANOVA إلى repository GitHub المرتبط والتحقق من branch والملفات المرفوعة.
 - [x] إعداد prompt عملي لـ OpenCode يشرح architecture والأوامر وقواعد التطوير وحالة الفيديوهات المؤجلة.
+
+- [x] مراجعة واعتماد schema/migrations الجديدة لـ channels وprocedures وprocedure_steps وaction_definitions وaction_calls وtickets؛ المرفق يذكر أنها مطبقة لكن النسخة الحالية لا تحتويها.
+- [x] دمج routers الجديدة بعد مراجعة عقودها: channels وprocedures وactions وtickets، مع اختبارات authorization وaudit؛ أضيفت حماية cross-workspace/cross-agent.
+- [x] إضافة processActionCall وربطه بالـ worker والـ queue مع idempotency وtimeouts وretry وticket escalation؛ نُفذت HTTP actions وticket escalation مع atomic claim.
+- [x] بناء UI حقيقية للقنوات والـ procedures والـ actions والـ helpdesk دون mock data أو ادعاء تكاملات خارجية.
+- [ ] تحديث docs/refactor-plan.md أو توحيده مع الخطة المرفقة وتوثيق backlog الخاص بـ Stripe/Shopify/search_knowledge/cost metrics.
+- [ ] تشغيل migrations والاختبارات والبناء بعد اعتماد Chatbase-parity، ثم إنشاء فرع feature وPull Request بدل الدفع المباشر إلى main.
+
+- [x] تنفيذ Chatbase-parity: إضافة جداول channels وprocedures وprocedure_steps وaction_definitions وaction_calls وtickets مع migration SQL حقيقية.
+- [x] دمج routers channels/procedures/actions/tickets مع workspace authorization وaudit logging واختبارات العزل الأساسية.
+- [x] إضافة processActionCall إلى worker مع queue dispatch وidempotency وtimeouts وretry وticket escalation الآمن.
+- [x] بناء UI حقيقية لـ Channels وProcedures وActions وHelpdesk باستخدام design system الحالي وبدون mock data.
+- [ ] تحديث التوثيق وتشغيل check/test/build والتحقق المرئي، ثم إنشاء branch feat/chatbase-parity وPull Request للمراجعة.
+
+- [ ] إضافة اختبارات createCaller لـ channels/procedures/actions/tickets تغطي عزل workspace ورفض cross-agent/cross-channel وتأثيرات audit.
+- [ ] إصلاح validation/error feedback في Operations، خصوصًا إظهار خطأ JSON غير صالح عند إنشاء channel وحالات النماذج الأخرى.
+- [ ] تنفيذ تحقق مرئي مصادق عليه لمسار /app/operations على desktop/mobile وتوثيق النتيجة قبل checkpoint.

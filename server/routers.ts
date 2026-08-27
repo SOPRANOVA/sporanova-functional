@@ -12,6 +12,10 @@ import { dashboardRouter } from "./routers/dashboard";
 import { dataSourcesRouter, documentsRouter, memoryRouter } from "./routers/data";
 import { preferencesRouter, workspacesRouter } from "./routers/workspaces";
 import { workflowsRouter } from "./routers/workflows";
+import { actionsRouter } from "./routers/actions";
+import { proceduresRouter } from "./routers/procedures";
+import { channelsRouter } from "./routers/channels";
+import { ticketsRouter } from "./routers/tickets";
 
 const credentialsInput = z.object({
   email: z.string().trim().email().max(320),
@@ -71,6 +75,10 @@ export const appRouter = router({
   memory: memoryRouter,
   analytics: analyticsRouter,
   workflows: workflowsRouter,
+  actions: actionsRouter,
+  procedures: proceduresRouter,
+  channels: channelsRouter,
+  tickets: ticketsRouter,
   notifications: notificationsRouter,
   audit: auditRouter,
 });
