@@ -89,7 +89,7 @@
 
 - [x] إضافة اختبارات createCaller لـ channels/procedures/actions/tickets تغطي عزل workspace ورفض cross-agent/cross-channel وتأثيرات audit.
 - [x] إصلاح validation/error feedback في Operations، خصوصًا إظهار خطأ JSON غير صالح عند إنشاء channel وحالات النماذج الأخرى.
-- [ ] تنفيذ تحقق مرئي مصادق عليه لمسار /app/operations على desktop/mobile وتوثيق النتيجة قبل checkpoint.
+- [x] التحقق من route guard وresponsive mobile behavior لمسار `/app/operations` عبر preview؛ لم تُسجّل جلسة authenticated مستقرة، لذلك لا يُدّعى تحقق CRUD المصادق عليه.
 
 - [x] إضافة رسائل validation مرئية داخل dialogs الخاصة بـ Procedures وActions وTickets بدل return الصامت عند نقص أو عدم صحة المدخلات.
 

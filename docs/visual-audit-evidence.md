@@ -31,6 +31,6 @@
 
 ## 2026-08-27 — Kimi-inspired Operations audit
 
-- The connected browser reached `/app/operations` with the authenticated Development Owner session.
-- The updated Operations layout rendered successfully: control-layer heading, workspace-scoped status, four live count blocks, agent-context selector, tabbed Channels/Procedures/Actions/Helpdesk navigation, and an honest `Workspace unavailable` empty state because no workspace was selected in this session.
-- A follow-up browser view timed out, so no destructive or sensitive interaction was attempted. Authenticated CRUD-state verification remains limited to the rendered empty state; no mock records were introduced.
+- Preview mobile verification of `/app/operations` correctly exercised the route guard and rendered the Login surface at 390×844 when no preview session was present.
+- A My Browser navigation attempt reached the route but did not produce a stable authenticated session: the visible state was `Verifying session…`, followed by browser-extension timeouts.
+- No authenticated CRUD state is claimed from this pass, and no mock records were introduced. The existing Operations implementation remains backed by the real workspace-scoped tRPC procedures and documented separately from this visual smoke check.
