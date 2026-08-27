@@ -111,3 +111,12 @@
 - [x] Reconcile the authenticated sidebar and route naming with the provided SOPRANOVA structure while preserving existing routes and tenant/RBAC isolation; `/app/data` is labeled Knowledge.
 - [x] Extend reusable components and Vitest coverage for the new agent workspace navigation and real data states; AgentWorkspaceModel contract tests pass alongside the server suite (43 tests).
 - [x] Run full verification and save a checkpoint after implementing the supported scope; `pnpm check`, 43 Vitest tests, `pnpm build`, and `git diff --check` pass. Deferred capabilities are explicitly labeled rather than presented as complete; the build retains a non-blocking large-chunk warning for future code-splitting.
+
+# Frontend rules from pasted_content_4.txt
+- [x] Align the public landing page to the white/neutral editorial SaaS system: centered editorial hero, compact navigation, restrained radii, subtle borders, and a restrained accent without copying Chatbase branding.
+- [x] Build a centered hero with the real SOPRANOVA hero product visual and truthful CTAs, preserving the existing hero video controls and reduced-motion behavior.
+- [x] Add purposeful product sections for feature grid, operating workflow, analytics/product evidence, integrations, enterprise/security, FAQ, final CTA, and footer; testimonial logos/quotes are intentionally omitted because no verified customer evidence was provided.
+- [x] Recompose the public landing page for mobile rather than only shrinking desktop: collapsed navigation, stacked/compact CTAs, readable product previews, single-column feature sections, and intentional spacing verified at 390×844.
+- [x] Review authenticated screens for consistency with the same frontend tokens and responsive interaction rules without changing backend contracts; AppLayout, Dashboard, Operations, Agents, and Intelligence continue using the shared light-mode tokens and protected tRPC contracts.
+- [x] Add frontend contract tests for landing workflow/connectors and Agent Workspace navigation/truthful content boundaries; 45 tests pass.
+- [x] Run full check/test/build/diff and visual verification, then save a checkpoint after the frontend rules are implemented; `pnpm check`, 45 Vitest tests, `pnpm build`, and `git diff --check` pass. Desktop/mobile landing screenshots pass; no unverified testimonials, customer logos, or fabricated metrics were added. The only build note is the non-blocking large-chunk warning.
