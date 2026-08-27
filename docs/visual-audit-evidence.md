@@ -24,3 +24,7 @@
 ## ملاحظات قابلية التكرار
 
 التحقق المرئي لا يثبت وحده صلاحية provider خارجي غير مكوّن. لذلك تم دعم الدليل باختبارات Vitest لمسارات API وworker، وبفحوصات TypeScript وbuild. يجب على بيئة الإنتاج إعادة اختبار Google OAuth بعد تسجيل `OAUTH_GOOGLE_CLIENT_ID` و`OAUTH_GOOGLE_CLIENT_SECRET` وcallback URL الموافق، لأن sandbox لا يملك بيانات اعتماد المؤسسة.
+
+## Operations verification status
+
+تم تنفيذ `/app/operations` بصفحات Channels وProcedures وActions وHelpdesk مع workspace-scoped tRPC، حالات loading/error/empty، ورسائل validation مرئية في dialogs. تعذر إغلاق التحقق المرئي المصادق عليه لهذه الصفحة على desktop/mobile في جلسة sandbox الحالية لأن صفحة `/app/operations` تعيد إلى Login ولا تتوفر جلسة مستخدم قابلة لـ takeover. يجب إعادة هذه الجولة بعد تسجيل دخول حقيقي في بيئة المراجعة.
