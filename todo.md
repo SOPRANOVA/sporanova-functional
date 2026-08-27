@@ -103,3 +103,11 @@
 - [x] تشغيل check/test/build وgit diff --check بعد تغييرات الواجهة؛ لا توجد اختبارات UI مستقلة لأن السلوك الجديد يعتمد على مكونات عرض وtRPC القائم.
 - [x] تنفيذ مراجعة بصرية desktop/mobile للصفحات العامة وLogin، مع توثيق أن مراجعة Operations المصادق عليها تحتاج جلسة حقيقية.
 - [x] حفظ checkpoint نهائي بعد اكتمال التحديثات المؤكدة؛ النسخة 57477006 منشورة، ويظل تدقيق Operations المصادق عليه منفصلًا ومعلّقًا حتى تتوفر جولة mobile مصادق عليها.
+
+# Follow-up from pasted product structure
+- [x] Define a canonical SOPRANOVA product loop: Data → Knowledge → Intelligence → Agents → Decisions → Actions → Automation → Optimization, rendered from real KPI fields where available and `—` where no aggregate exists.
+- [x] Add an authenticated Agent Workspace information architecture with Overview, Build, Knowledge, Instructions, Procedures, Actions, Guardrails, Test, Deploy, Activity, Analytics, Backstage, Integrations, and Settings entry points; linked entries route to existing protected surfaces and deferred entries are explicitly labeled.
+- [x] Add real or explicitly scoped surfaces for simulations, regression testing, traces/observability, and Agent Backstage without mock metrics or fabricated customer data; Verification and Trace panels state their current contract boundaries.
+- [x] Reconcile the authenticated sidebar and route naming with the provided SOPRANOVA structure while preserving existing routes and tenant/RBAC isolation; `/app/data` is labeled Knowledge.
+- [x] Extend reusable components and Vitest coverage for the new agent workspace navigation and real data states; AgentWorkspaceModel contract tests pass alongside the server suite (43 tests).
+- [x] Run full verification and save a checkpoint after implementing the supported scope; `pnpm check`, 43 Vitest tests, `pnpm build`, and `git diff --check` pass. Deferred capabilities are explicitly labeled rather than presented as complete; the build retains a non-blocking large-chunk warning for future code-splitting.

@@ -1,7 +1,7 @@
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { AlertCircle, ArrowUpRight, Bot, CheckCircle2, Database, GitBranch, Lightbulb, RefreshCw, Sparkles } from "lucide-react";
+import { AlertCircle, ArrowUpRight, Bot, CheckCircle2, Database, FileSearch, GitBranch, Lightbulb, RefreshCw, Sparkles, Zap } from "lucide-react";
 import { Link } from "wouter";
 import { consoleSurface, MetricBlock } from "@/components/app/ConsolePrimitives";
 
@@ -48,12 +48,16 @@ export default function Dashboard() {
 
 function OperatingLoop({ data, loading }: { data?: { kpis: { dataSources: number; activeAgents: number; insightsToday: number }; signals: Array<unknown> }; loading: boolean }) {
   const stages = [
-    { label: "Connect", value: data?.kpis.dataSources ?? 0, detail: "sources", icon: Database },
-    { label: "Understand", value: data?.kpis.activeAgents ?? 0, detail: "agents", icon: Bot },
-    { label: "Review", value: data?.kpis.insightsToday ?? 0, detail: "insights", icon: Lightbulb },
-    { label: "Decide", value: data?.signals.length ?? 0, detail: "signals", icon: CheckCircle2 },
+    { label: "Data", value: data?.kpis.dataSources ?? "—", detail: "sources", icon: Database },
+    { label: "Knowledge", value: data?.kpis.dataSources ?? "—", detail: "connected context", icon: FileSearch },
+    { label: "Intelligence", value: data?.kpis.insightsToday ?? "—", detail: "insights", icon: Sparkles },
+    { label: "Agents", value: data?.kpis.activeAgents ?? "—", detail: "active", icon: Bot },
+    { label: "Decisions", value: data?.signals.length ?? "—", detail: "signals", icon: CheckCircle2 },
+    { label: "Actions", value: "—", detail: "on demand", icon: GitBranch },
+    { label: "Automation", value: "—", detail: "not measured", icon: Zap },
+    { label: "Optimization", value: "—", detail: "review cycle", icon: Lightbulb },
   ];
-  return <div className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-4 lg:gap-x-3">{stages.map((stage, index) => { const Icon = stage.icon; return <div key={stage.label} className="relative"><div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/10 text-[#A9B8FF]"><Icon size={14} /></span><span className="text-xs font-medium text-white/75">{stage.label}</span></div><p className="mt-4 text-2xl font-semibold">{loading ? "…" : stage.value}</p><p className="mt-1 text-[11px] text-white/40">{stage.detail}</p>{index < stages.length - 1 && <span className="absolute right-[-10px] top-4 hidden h-px w-4 bg-white/15 sm:block" />}</div>; })}</div>;
+  return <div className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-4 lg:grid-cols-8 lg:gap-x-3">{stages.map((stage, index) => { const Icon = stage.icon; return <div key={stage.label} className="relative min-w-0"><div className="flex items-center gap-2"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/10 text-[#A9B8FF]"><Icon size={14} /></span><span className="truncate text-xs font-medium text-white/75">{stage.label}</span></div><p className="mt-4 text-2xl font-semibold">{loading ? "…" : stage.value}</p><p className="mt-1 truncate text-[11px] text-white/40">{stage.detail}</p>{index < stages.length - 1 && <span className="absolute right-[-10px] top-4 hidden h-px w-4 bg-white/15 xl:block" />}</div>; })}</div>;
 }
 
 function RevenueSpark({ values }: { values: number[] }) { const max = Math.max(...values); const min = Math.min(...values); const points = values.map((value, index) => `${(index / Math.max(values.length - 1, 1)) * 100},${100 - ((value - min) / Math.max(max - min, 1)) * 84 - 8}`).join(" "); return <div className="mt-10"><svg viewBox="0 0 100 100" preserveAspectRatio="none" className="h-44 w-full overflow-visible" role="img" aria-label="Workspace revenue trend"><defs><linearGradient id="revenueFill" x1="0" x2="0" y1="0" y2="1"><stop stopColor="#6B7FBF" stopOpacity=".22" /><stop offset="1" stopColor="#6B7FBF" stopOpacity="0" /></linearGradient></defs><polygon points={`0,100 ${points} 100,100`} fill="url(#revenueFill)" /><polyline points={points} fill="none" stroke="#5B6FA8" strokeWidth="1.4" vectorEffect="non-scaling-stroke" /></svg></div>; }

@@ -10,11 +10,11 @@ const navItems = [
   { href: "/app/intelligence", label: "Intelligence", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.3"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2M4.22 4.22l1.42 1.42M12.36 12.36l1.42 1.42M4.22 13.78l1.42-1.42M12.36 5.64l1.42-1.42" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
   )},
-  { href: "/app/decisions", label: "Decisions", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>◐</span> },
   { href: "/app/agents", label: "AI Agents", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="5" y="7" width="8" height="7" rx="2" stroke="currentColor" strokeWidth="1.3"/><path d="M7 7V5.5a2 2 0 014 0V7" stroke="currentColor" strokeWidth="1.3"/><circle cx="7.5" cy="10.5" r="1" fill="currentColor"/><circle cx="10.5" cy="10.5" r="1" fill="currentColor"/></svg>
   )},
-  { href: "/app/data", label: "Data", icon: (
+  { href: "/app/decisions", label: "Decisions", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>◐</span> },
+  { href: "/app/data", label: "Knowledge", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><ellipse cx="9" cy="5" rx="6" ry="2.5" stroke="currentColor" strokeWidth="1.3"/><path d="M3 5v4c0 1.38 2.69 2.5 6 2.5S15 10.38 15 9V5" stroke="currentColor" strokeWidth="1.3"/><path d="M3 9v4c0 1.38 2.69 2.5 6 2.5S15 14.38 15 13V9" stroke="currentColor" strokeWidth="1.3"/></svg>
   )},
   { href: "/app/memory", label: "Memory", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>◻</span> },
@@ -27,6 +27,7 @@ const navItems = [
   { href: "/app/operations", label: "Operations", icon: (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 5h12M3 9h12M3 13h8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/><circle cx="13.5" cy="13" r="1.5" stroke="currentColor" strokeWidth="1.3"/></svg>
   )},
+  { href: "/app/operations", label: "Integrations", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>⛓</span> },
   { href: "/app/activity", label: "Activity", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>◷</span> },
   { href: "/app/workspace", label: "Workspace", icon: <span aria-hidden="true" style={{ fontSize: "1rem" }}>◈</span> },
   { href: "/app/settings", label: "Settings", icon: (
@@ -65,7 +66,7 @@ export default function AppLayout() {
 
         {/* Nav */}
         <nav className="flex-1 py-4 overflow-y-auto">
-          {navItems.filter((item) => !["Workspace", "Settings"].includes(item.label)).map((item) => {
+          {navItems.filter((item) => !["Workspace", "Integrations", "Settings"].includes(item.label)).map((item) => {
             const active = isActive(item.href);
             return (
               <Link
@@ -105,7 +106,7 @@ export default function AppLayout() {
         </nav>
 
         <div className="border-t border-sn-100 p-2">
-          {navItems.filter((item) => ["Workspace", "Settings"].includes(item.label)).map((item) => {
+          {navItems.filter((item) => ["Workspace", "Integrations", "Settings"].includes(item.label)).map((item) => {
             const active = isActive(item.href);
             return <Link key={item.href} to={item.href} title={collapsed ? item.label : undefined} className="mb-0.5 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all" style={{ background: active ? "#F0EFF8" : "transparent", color: active ? "#5B6FA8" : "#8C887F" }}><span style={{ flexShrink: 0 }}>{item.icon}</span>{!collapsed && <span className="whitespace-nowrap">{item.label}</span>}</Link>;
           })}
