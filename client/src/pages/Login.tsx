@@ -76,22 +76,14 @@ export default function Login() {
           <Logo size={24} color="#F8F6F2" showWordmark />
         </div>
 
-        <div className="relative">
-          <blockquote
-            className="sn-display mb-6"
-            style={{ fontSize: "1.75rem", color: "#F8F6F2", lineHeight: 1.3 }}
-          >
-            "The intelligence layer your enterprise has been missing."
-          </blockquote>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-sn-indigo/30 flex items-center justify-center">
-              <span className="text-xs font-medium text-sn-lavender">SR</span>
-            </div>
-            <div>
-              <div className="text-sm font-medium" style={{ color: "#F8F6F2" }}>Sarah Reeves</div>
-              <div className="text-xs" style={{ color: "rgba(248,246,242,0.4)" }}>CTO, Meridian Financial</div>
-            </div>
-          </div>
+        <div className="relative max-w-md">
+          <p className="sn-label mb-5" style={{ color: "#A9B8FF" }}>The operating layer</p>
+          <h2 className="sn-display mb-5" style={{ fontSize: "2.2rem", color: "#F8F6F2", lineHeight: 1.15 }}>
+            Connect the context. Make the next move visible.
+          </h2>
+          <p className="text-sm leading-relaxed" style={{ color: "rgba(248,246,242,0.5)" }}>
+            SOPRANOVA brings your workspace, intelligence, and operations into one place built for clear decisions.
+          </p>
         </div>
       </div>
 

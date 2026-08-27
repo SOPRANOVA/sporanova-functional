@@ -90,3 +90,14 @@
 - [ ] تنفيذ تحقق مرئي مصادق عليه لمسار /app/operations على desktop/mobile وتوثيق النتيجة قبل checkpoint.
 
 - [x] إضافة رسائل validation مرئية داخل dialogs الخاصة بـ Procedures وActions وTickets بدل return الصامت عند نقص أو عدم صحة المدخلات.
+
+- [ ] تحليل Chatbase الحالي كمصدر مرجعي للـ landing page وapp UX: hierarchy، navigation، CTA، media، وحالات الواجهة.
+- [ ] تحويل نتائج التحليل إلى نظام SOPRANOVA فاتح وأصلي، بلا نسخ علامات أو نصوص أو أصول Chatbase.
+- [ ] إعداد prompt OpenCode كامل لتطبيق UI/UX مستوحى من Chatbase، مع فيديوهات واجهة قابلة للوصول وأداء جيد.
+- [x] تنفيذ الدفعة الأولى من Kimi-inspired visual patterns داخل Home وDashboard وPlatform وIntelligencePublic، بما يشمل storytelling بصري وتفاعلات أصلية دون نسخ أصول Kimi.
+- [x] إعادة صقل Home وPlatform وIntelligencePublic لتقديم product moments تفاعلية بهوية SOPRANOVA الفاتحة.
+- [x] إعادة صقل AgentsPublic وSolutionsPage وEnterprisePage وAboutPage وContactPage ضمن نفس نظام storytelling الفاتح، مع إزالة placeholders التي توحي ببيانات عميل حقيقية.
+- [x] إعادة صقل Command Center وOperations بمكونات dashboard قابلة لإعادة الاستخدام وحالات حقيقية من tRPC؛ بقي التحقق المرئي المصادق عليه كبند مستقل.
+- [x] تشغيل check/test/build وgit diff --check بعد تغييرات الواجهة؛ لا توجد اختبارات UI مستقلة لأن السلوك الجديد يعتمد على مكونات عرض وtRPC القائم.
+- [x] تنفيذ مراجعة بصرية desktop/mobile للصفحات العامة وLogin، مع توثيق أن مراجعة Operations المصادق عليها تحتاج جلسة حقيقية.
+- [ ] حفظ checkpoint نهائي بعد اكتمال التحديثات المؤكدة؛ يظل تدقيق Operations المصادق عليه منفصلًا ومعلّقًا حتى تتوفر جلسة حقيقية.

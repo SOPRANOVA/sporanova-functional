@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import PublicNav from "../components/PublicNav";
 import AnimatedSection from "../components/AnimatedSection";
 import Logo from "../components/Logo";
+import ExplainerVideo from "../components/ExplainerVideo";
 
 const agents = [
   { name: "Revenue Analyst", purpose: "Monitors revenue signals, detects anomalies, and surfaces pricing opportunities across all business units.", status: "active", color: "#4A8B8C" },
@@ -28,6 +29,12 @@ export default function AgentsPublic() {
           </p>
         </AnimatedSection>
 
+        <AnimatedSection delay={80}>
+          <div className="mb-20">
+            <ExplainerVideo eyebrow="Agents film" title="Give intelligence a role, a boundary, and a next step." description="A visual walkthrough of how specialized agents share context while staying inside the operating rules of your workspace." />
+          </div>
+        </AnimatedSection>
+
         {/* Agent grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
           {agents.map((agent, i) => (
@@ -48,7 +55,7 @@ export default function AgentsPublic() {
                 <p className="text-sm leading-relaxed" style={{ color: "#8C887F" }}>{agent.purpose}</p>
                 <div className="mt-4 flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full" style={{ background: agent.status === "active" ? "#4A8B8C" : "#B8B4AC" }} />
-                  <span className="text-xs" style={{ color: "#B8B4AC" }}>Monitoring 24/7</span>
+                  <span className="text-xs" style={{ color: "#B8B4AC" }}>Monitoring on its configured schedule</span>
                 </div>
               </div>
             </AnimatedSection>

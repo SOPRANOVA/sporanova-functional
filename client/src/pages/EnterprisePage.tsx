@@ -1,79 +1,27 @@
+import { useState } from "react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router";
 import PublicNav from "../components/PublicNav";
 import AnimatedSection from "../components/AnimatedSection";
+import ExplainerVideo from "../components/ExplainerVideo";
 import Logo from "../components/Logo";
 
 const pillars = [
-  { label: "Security", title: "Enterprise-grade security posture", desc: "SOC 2 Type II certified. Data encrypted at rest and in transit. Private cloud and on-premises deployment available. No training on your data.", details: ["AES-256 encryption", "SAML/OIDC SSO", "Private VPC deployment", "SOC 2 Type II"] },
-  { label: "Governance", title: "Comprehensive audit and compliance", desc: "Full audit trails on every query, decision, and agent action. Configurable data retention policies. Export-ready compliance reports.", details: ["Immutable audit logs", "GDPR compliance", "Data lineage tracking", "Configurable retention"] },
-  { label: "Permissions", title: "Fine-grained access control", desc: "Role-based and attribute-based access control at the row, column, and document level. Agents operate only within defined permission boundaries.", details: ["RBAC + ABAC", "Data-level permissions", "Agent sandboxing", "Federated identity"] },
-  { label: "Scalability", title: "Built for enterprise workloads", desc: "Horizontal scaling to billions of records. Sub-200ms query response at scale. 99.95% uptime SLA with dedicated support.", details: ["Auto-scaling infrastructure", "99.95% SLA", "Global CDN", "Dedicated SRE support"] },
-  { label: "Integrations", title: "Connect your entire enterprise stack", desc: "60+ native connectors. REST API and webhook support. Custom connector SDK. Real-time and batch sync modes.", details: ["Salesforce, SAP, Oracle", "PostgreSQL, Snowflake", "Google Workspace", "REST API + webhooks"] },
+  { label: "Security", title: "Make the operating boundary explicit.", desc: "Keep workspace context, agent behavior, and action execution inside the permissions and controls your organization defines.", details: ["Workspace-scoped access", "Protected session flow", "Controlled action execution", "Clear operational boundaries"] },
+  { label: "Governance", title: "Keep a visible trail from question to action.", desc: "Use decisions, activity, and procedure states to make review, ownership, and change easier to follow.", details: ["Audit activity", "Decision evidence", "Reviewable procedures", "Stateful operations"] },
+  { label: "Permissions", title: "Give every role the right context.", desc: "Separate workspace membership, agent scope, and operational records so teams can work without collapsing important boundaries.", details: ["Workspace membership", "Role-aware access", "Agent-scoped resources", "Tenant isolation"] },
+  { label: "Operations", title: "Design for the work after the insight.", desc: "Connect intelligence to procedures, actions, and human handoff so the next step is not left to an untracked message.", details: ["Durable worker queue", "Idempotent actions", "Human escalation", "Retry-aware flows"] },
+  { label: "Integrations", title: "Connect the context you are ready to use.", desc: "Bring configured data sources, documents, and APIs into the workspace through the supported connection surfaces.", details: ["HTTP sources", "Document ingestion", "API-backed workflows", "Workspace data layer"] },
 ];
 
 export default function Enterprise() {
-  return (
-    <div className="min-h-screen bg-sn-white">
-      <PublicNav />
-      <div className="pt-32 pb-24 max-w-7xl mx-auto px-6">
-        <AnimatedSection>
-          <div className="sn-label mb-6">Enterprise</div>
-          <h1 className="sn-display mb-6" style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", color: "#1A1F3C", maxWidth: "700px" }}>
-            Enterprise-ready<br />
-            <span style={{ color: "#6B7FBF" }}>from day one.</span>
-          </h1>
-          <p className="text-lg leading-relaxed mb-16" style={{ color: "#6B6660", maxWidth: "560px" }}>
-            SOPRANOVA was designed for enterprise deployment from the ground up. Security, governance, and compliance are not features — they are foundational properties.
-          </p>
-        </AnimatedSection>
+  const [activePillar, setActivePillar] = useState(0);
+  const pillar = pillars[activePillar];
+  return <div className="min-h-screen bg-[#FAFAF8] text-[#1A1F3C]"><PublicNav /><main className="mx-auto max-w-7xl px-6 pb-24 pt-32 lg:px-10"><AnimatedSection animation="slide-up"><div className="grid gap-12 lg:grid-cols-[1fr_.8fr] lg:items-end"><div><p className="sn-label mb-6 text-[#6B7FBF]">Enterprise</p><h1 className="sn-display max-w-3xl text-5xl leading-[.98] md:text-7xl">Enterprise-ready <span className="text-[#6B7FBF]">from the first decision.</span></h1><p className="mt-8 max-w-xl text-lg leading-relaxed text-[#6B6660]">SOPRANOVA makes context, permissions, reasoning, and action visible enough for teams to operate with confidence.</p></div><div className="border-t border-[#E8E6E2] pt-5"><p className="sn-label">The enterprise question</p><p className="mt-4 text-xl leading-relaxed text-[#6B6660]">Can your team explain what happened, why it happened, and what happens next?</p></div></div></AnimatedSection>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-20">
-          {pillars.map((p, i) => (
-            <AnimatedSection key={p.label} delay={i * 50} className={i === 0 ? "lg:col-span-2" : ""}>
-              <div className="p-8 rounded-2xl border" style={{ background: "#FAFAF8", borderColor: "#E8E6E2" }}>
-                <div className="flex flex-col md:flex-row gap-6">
-                  <div className="flex-1">
-                    <div className="sn-label mb-3">{p.label}</div>
-                    <h3 className="text-xl font-medium mb-3" style={{ color: "#1A1F3C" }}>{p.title}</h3>
-                    <p className="text-sm leading-relaxed" style={{ color: "#6B6660" }}>{p.desc}</p>
-                  </div>
-                  <div className="md:w-52 flex-shrink-0">
-                    <div className="space-y-2">
-                      {p.details.map((d) => (
-                        <div key={d} className="flex items-center gap-2 text-sm" style={{ color: "#6B6660" }}>
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#4A8B8C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                          {d}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
+<section className="mt-20"><AnimatedSection animation="scale" delay={100}><ExplainerVideo eyebrow="Enterprise film" title="Trust the loop because you can inspect it." description="A visual walkthrough of the security, governance, and operational patterns that keep the intelligence layer reviewable." /></AnimatedSection></section>
 
-        <AnimatedSection className="text-center" delay={200}>
-          <div className="rounded-3xl p-12 md:p-16" style={{ background: "#1A1F3C" }}>
-            <div className="sn-label mb-4" style={{ color: "rgba(248,246,242,0.4)" }}>Enterprise deployment</div>
-            <h2 className="sn-display mb-4" style={{ fontSize: "2rem", color: "#F8F6F2" }}>Ready for a security review?</h2>
-            <p className="text-sm mb-8" style={{ color: "rgba(248,246,242,0.55)" }}>Our team is available for technical due diligence, security questionnaires, and custom deployment architectures.</p>
-            <Link to="/contact" className="px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300"
-              style={{ background: "#F8F6F2", color: "#1A1F3C" }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = ""; }}>
-              Contact Enterprise Sales
-            </Link>
-          </div>
-        </AnimatedSection>
-      </div>
+<section className="mt-24"><AnimatedSection animation="fade"><div className="mb-10 flex flex-wrap items-end justify-between gap-6"><div><p className="sn-label mb-4 text-[#6B7FBF]">Enterprise foundations</p><h2 className="sn-display text-4xl md:text-5xl">Confidence is a product behavior.</h2></div><p className="max-w-sm text-sm leading-relaxed text-[#8C887F]">Explore the foundations that make SOPRANOVA usable inside real operating environments.</p></div></AnimatedSection><div className="grid gap-4 lg:grid-cols-[.8fr_1.2fr]"><div className="border-t border-[#E8E6E2]">{pillars.map((item, index) => <button key={item.label} type="button" onClick={() => setActivePillar(index)} className={`flex w-full items-center gap-4 border-b border-dashed border-[#D9D5CE] px-3 py-5 text-right transition ${activePillar === index ? "bg-[#F0EFF8]" : "hover:bg-white"}`}><span className="text-sm font-semibold text-[#B8B4AC]">0{index + 1}</span><span className={`flex-1 text-sm font-medium ${activePillar === index ? "text-[#1A1F3C]" : "text-[#6B6660]"}`}>{item.label}</span><ArrowRight size={15} className={activePillar === index ? "text-[#6B7FBF]" : "text-[#D4D1CB]"} /></button>)}</div><div className="min-h-[25rem] rounded-[1.75rem] border border-[#E8E6E2] bg-white p-7 md:p-9"><div className="flex items-center justify-between"><span className="sn-label text-[#6B7FBF]">0{activePillar + 1} / {pillar.label}</span><span className="text-xs text-[#B8B4AC]">Workspace-ready foundation</span></div><h3 className="mt-12 max-w-xl font-[Inter] text-3xl font-medium leading-tight">{pillar.title}</h3><p className="mt-4 max-w-xl text-base leading-relaxed text-[#6B6660]">{pillar.desc}</p><div className="mt-10 grid gap-3 sm:grid-cols-2">{pillar.details.map(detail => <div key={detail} className="flex items-center gap-2 bg-[#F4F3F0] px-4 py-3 text-sm text-[#6B6660]"><CheckCircle2 size={15} className="shrink-0 text-[#4A8B8C]" />{detail}</div>)}</div></div></div></section>
 
-      <footer className="border-t border-sn-100 py-10">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <Logo size={20} showWordmark />
-          <div className="text-sm" style={{ color: "#B8B4AC" }}>© 2026 SOPRANOVA</div>
-        </div>
-      </footer>
-    </div>
-  );
+<AnimatedSection className="mt-24" delay={180}><div className="rounded-[2rem] bg-[#1A1F3C] p-10 text-center md:p-16"><p className="sn-label mb-4 text-[#A9B8FF]">Enterprise deployment</p><h2 className="sn-display mb-5 text-4xl text-[#FAFAF8] md:text-5xl">Ready to review the operating layer?</h2><p className="mx-auto mb-8 max-w-lg text-sm leading-relaxed text-white/55">Bring your security questions, data environment, and deployment constraints. We can map the next step around your context.</p><Link to="/contact" className="inline-flex items-center gap-2 rounded-xl bg-[#FAFAF8] px-5 py-3 text-sm font-medium text-[#1A1F3C] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A9B8FF]">Contact enterprise sales <ArrowRight size={15} /></Link></div></AnimatedSection></main><footer className="border-t border-[#E8E6E2] px-6 py-10 lg:px-10"><div className="mx-auto flex max-w-7xl items-center justify-between"><Logo size={20} showWordmark /><div className="text-xs text-[#B8B4AC]">© 2026 SOPRANOVA</div></div></footer></div>;
 }

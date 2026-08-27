@@ -1,115 +1,29 @@
+import { useState } from "react";
 import { Link } from "react-router";
+import { ArrowUpRight, Check, ChevronLeft, Sparkles } from "lucide-react";
 import PublicNav from "../components/PublicNav";
 import AnimatedSection from "../components/AnimatedSection";
+import ExplainerVideo from "../components/ExplainerVideo";
 import Logo from "../components/Logo";
 
 const steps = [
-  { n: "01", title: "Understands", desc: "Natural language queries translate into precise, context-aware analysis against your enterprise data." },
-  { n: "02", title: "Analyzes", desc: "Multi-layer statistical and semantic analysis surfaces trends, anomalies, and causal relationships." },
-  { n: "03", title: "Finds Patterns", desc: "Cross-domain pattern recognition connects signals across time, geography, and business units." },
-  { n: "04", title: "Generates Insights", desc: "Structured insights with evidence chains, confidence scores, and business impact assessments." },
-  { n: "05", title: "Recommends Actions", desc: "Calibrated recommendations ranked by expected impact, feasibility, and strategic alignment." },
+  { n: "01", title: "Understands", desc: "Natural-language questions become a precise request against the context your workspace makes available.", color: "#4A7FA5" },
+  { n: "02", title: "Analyzes", desc: "Semantic and analytical reasoning separates signal from noise while keeping the path visible.", color: "#5B6FA8" },
+  { n: "03", title: "Finds patterns", desc: "Signals across time, teams, and domains are brought together for a clearer point of view.", color: "#6B7FBF" },
+  { n: "04", title: "Generates insight", desc: "The answer is organized around context, evidence, confidence, and business impact.", color: "#8B8FC4" },
+  { n: "05", title: "Recommends action", desc: "The next move is stated clearly and can be routed into the decisions and operations loop.", color: "#4A8B8C" },
 ];
 
 export default function IntelligencePublic() {
-  return (
-    <div className="min-h-screen bg-sn-white">
-      <PublicNav />
-      <div className="pt-32 pb-24 max-w-7xl mx-auto px-6">
-        <AnimatedSection>
-          <div className="sn-label mb-6">Intelligence Layer</div>
-          <h1 className="sn-display mb-6" style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", color: "#1A1F3C", maxWidth: "700px" }}>
-            Intelligence that<br />
-            <span style={{ color: "#6B7FBF" }}>understands context.</span>
-          </h1>
-          <p className="text-lg leading-relaxed mb-16" style={{ color: "#6B6660", maxWidth: "560px" }}>
-            SOPRANOVA's intelligence layer is not a search engine. It reasons about your business, understands your domain, and generates insights that a analyst would be proud to present.
-          </p>
-        </AnimatedSection>
+  const [activeStep, setActiveStep] = useState(0);
+  const step = steps[activeStep];
+  return <div className="min-h-screen bg-[#FAFAF8] text-[#1A1F3C]"><PublicNav /><main className="mx-auto max-w-7xl px-6 pb-24 pt-32 lg:px-10"><AnimatedSection animation="slide-up"><div className="grid gap-12 lg:grid-cols-[1fr_.8fr] lg:items-end"><div><p className="sn-label mb-6 text-[#6B7FBF]">Intelligence layer</p><h1 className="sn-display max-w-3xl text-5xl leading-[.98] md:text-7xl">Intelligence that <span className="text-[#6B7FBF]">understands context.</span></h1><p className="mt-8 max-w-xl text-lg leading-relaxed text-[#6B6660]">SOPRANOVA helps teams move from a question to a clear, evidence-aware next step without losing the reasoning in between.</p><div className="mt-8 flex flex-wrap gap-3"><Link to="/signup" className="inline-flex items-center gap-2 rounded-xl bg-[#1A1F3C] px-5 py-3 text-sm font-medium text-[#FAFAF8] transition hover:-translate-y-0.5 hover:bg-[#252B4A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B7FBF]">Experience Intelligence <ArrowUpRight size={16} /></Link><Link to="/app/intelligence" className="inline-flex items-center gap-2 rounded-xl border border-[#D4D1CB] px-5 py-3 text-sm font-medium transition hover:-translate-y-0.5 hover:border-[#1A1F3C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B7FBF]">Open workspace</Link></div></div><div className="border-t border-[#E8E6E2] pt-5"><p className="sn-label">A different kind of answer</p><p className="mt-4 text-xl leading-relaxed text-[#6B6660]">Not just a response. A visible chain from question to evidence to action.</p></div></div></AnimatedSection>
 
-        {/* Process visualization */}
-        <AnimatedSection className="mb-24" delay={80}>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-            {steps.map((step, i) => (
-              <div key={step.n} className="relative">
-                <div className="p-6 rounded-2xl h-full" style={{ background: "#F4F3F0" }}>
-                  <div className="sn-label mb-3">{step.n}</div>
-                  <div className="font-medium mb-2" style={{ color: "#1A1F3C", fontFamily: "'Instrument Serif', serif" }}>{step.title}</div>
-                  <p className="text-xs leading-relaxed" style={{ color: "#8C887F" }}>{step.desc}</p>
-                </div>
-                {i < 4 && (
-                  <div className="hidden md:flex absolute -right-1.5 top-1/2 -translate-y-1/2 z-10 w-3 h-3 rounded-full items-center justify-center"
-                    style={{ background: "#6B7FBF" }}>
-                    <div className="w-1 h-1 rounded-full bg-white" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </AnimatedSection>
+<section className="mt-20"><AnimatedSection animation="scale" delay={120}><ExplainerVideo eyebrow="Intelligence film" title="From context to a confident next step." description="A visual explanation of how SOPRANOVA reasons across connected context, surfaces patterns, and keeps evidence close to every recommendation." /></AnimatedSection></section>
 
-        {/* Example query */}
-        <AnimatedSection delay={120}>
-          <div className="sn-label mb-6">Example Intelligence Output</div>
-          <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#E8E6E2" }}>
-            <div className="px-6 py-4 border-b" style={{ background: "#F4F3F0", borderColor: "#E8E6E2" }}>
-              <div className="text-sm font-medium" style={{ color: "#1A1F3C" }}>
-                "Why did revenue in the North region decline 8.3% last quarter?"
-              </div>
-            </div>
-            <div className="p-6 space-y-5" style={{ background: "#FAFAF8" }}>
-              <div>
-                <div className="sn-label mb-2" style={{ color: "#4A8B8C" }}>Analysis</div>
-                <p className="text-sm leading-relaxed" style={{ color: "#1A1F3C" }}>
-                  Revenue contraction in Region North is attributable to three compounding factors identified across 14 data sources spanning the trailing 18 months.
-                </p>
-              </div>
-              <div>
-                <div className="sn-label mb-3" style={{ color: "#5B6FA8" }}>Evidence</div>
-                <div className="space-y-2">
-                  {[
-                    { source: "Salesforce CRM", finding: "Enterprise deal closure rate fell from 34% to 21% following rep turnover in Q3." },
-                    { source: "Market Intelligence", finding: "Competitor pricing 12% lower in affected segments as of September 2025." },
-                    { source: "Customer Success", finding: "Net promoter score declined 18 points; product adoption at 61% vs 79% prior year." },
-                  ].map((ev) => (
-                    <div key={ev.source} className="flex gap-3 p-3 rounded-xl" style={{ background: "#F4F3F0" }}>
-                      <div className="flex-shrink-0 px-2 py-0.5 rounded text-xs font-medium" style={{ background: "#E8E6E2", color: "#6B6660" }}>{ev.source}</div>
-                      <p className="text-xs leading-relaxed" style={{ color: "#6B6660" }}>{ev.finding}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div className="sn-label mb-2" style={{ color: "#6B7FBF" }}>Recommendation</div>
-                <p className="text-sm leading-relaxed" style={{ color: "#1A1F3C" }}>
-                  Prioritize accelerated onboarding for replacement sales reps in Region North. Consider a 90-day targeted pricing concession of 8–10% for at-risk enterprise accounts while product adoption gaps are resolved.
-                </p>
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button className="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200" style={{ background: "#1A1F3C", color: "#F8F6F2" }}>Create Decision</button>
-                <button className="px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-200" style={{ borderColor: "#E8E6E2", color: "#1A1F3C" }}>Investigate Further</button>
-              </div>
-            </div>
-          </div>
-        </AnimatedSection>
+<section className="mt-24"><AnimatedSection animation="fade"><div className="mb-10 flex flex-wrap items-end justify-between gap-6"><div><p className="sn-label mb-4 text-[#6B7FBF]">The intelligence loop</p><h2 className="sn-display text-4xl md:text-5xl">See the reasoning as it unfolds.</h2></div><p className="max-w-sm text-sm leading-relaxed text-[#8C887F]">Select each stage to understand how a question becomes an actionable, reviewable output.</p></div></AnimatedSection><div className="grid gap-4 lg:grid-cols-[1.15fr_.85fr]"><div className="grid gap-2 sm:grid-cols-5">{steps.map((item, index) => <button key={item.n} type="button" onClick={() => setActiveStep(index)} className={`relative min-h-[13rem] p-5 text-right transition ${activeStep === index ? "bg-[#1A1F3C] text-[#FAFAF8]" : "bg-[#F4F3F0] text-[#1A1F3C] hover:bg-white"}`}><span className="sn-label" style={{ color: activeStep === index ? "#A9B8FF" : item.color }}>{item.n}</span><h3 className="mt-9 text-lg font-medium">{item.title}</h3><span className={`absolute bottom-5 left-5 h-1.5 w-1.5 rounded-full ${activeStep === index ? "bg-[#75B7B0]" : "bg-[#D4D1CB]"}`} /></button>)}</div><div className="min-h-[13rem] rounded-[1.75rem] border border-[#E8E6E2] bg-white p-7"><div className="flex items-center justify-between"><span className="sn-label" style={{ color: step.color }}>{step.n} / {step.title}</span><Sparkles size={18} className="text-[#6B7FBF]" /></div><h3 className="mt-10 max-w-md font-[Inter] text-2xl font-medium leading-tight">{step.title} is where the next layer becomes visible.</h3><p className="mt-4 max-w-lg text-sm leading-relaxed text-[#6B6660]">{step.desc}</p><div className="mt-8 flex items-center gap-2 text-xs text-[#4A8B8C]"><Check size={14} />Traceable by design</div></div></div></section>
 
-        {/* CTA */}
-        <AnimatedSection className="mt-20 text-center" delay={160}>
-          <Link to="/signup" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300"
-            style={{ background: "#1A1F3C", color: "#FAFAF8" }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "#252B4A"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "#1A1F3C"; e.currentTarget.style.transform = ""; }}>
-            Experience Intelligence
-          </Link>
-        </AnimatedSection>
-      </div>
+<section className="mt-24"><AnimatedSection delay={120}><div className="mb-6 flex flex-wrap items-end justify-between gap-5"><div><p className="sn-label mb-4 text-[#6B7FBF]">Illustrative output</p><h2 className="sn-display text-4xl md:text-5xl">An answer that shows its work.</h2></div><span className="text-xs text-[#B8B4AC]">Conceptual interface preview</span></div><div className="overflow-hidden rounded-[1.75rem] border border-[#E8E6E2] bg-white"><div className="border-b border-[#E8E6E2] bg-[#F4F3F0] px-6 py-5"><p className="text-sm font-medium">Ask a question about your connected workspace</p><p className="mt-2 text-xs text-[#8C887F]">The live answer uses the sources and permissions configured for the current workspace.</p></div><div className="grid gap-8 p-6 md:grid-cols-[1.15fr_.85fr] md:p-8"><div><p className="sn-label text-[#4A8B8C]">Analysis</p><p className="mt-3 text-base leading-relaxed">SOPRANOVA organizes the response around the context it can verify, making the reasoning easier to review and discuss.</p><div className="mt-8 flex flex-wrap gap-2"><span className="rounded-lg bg-[#EEF6F6] px-3 py-2 text-xs text-[#4A8B8C]">Connected context</span><span className="rounded-lg bg-[#F0EFF8] px-3 py-2 text-xs text-[#5B6FA8]">Evidence-aware</span><span className="rounded-lg bg-[#F4F3F0] px-3 py-2 text-xs text-[#6B6660]">Workspace-scoped</span></div></div><div className="border-t border-[#E8E6E2] pt-6 md:border-r-0 md:border-t-0 md:border-l md:pt-0 md:pr-0 md:pl-8"><p className="sn-label text-[#6B7FBF]">Next step</p><p className="mt-3 text-base leading-relaxed">Review the evidence, create a decision, or continue investigating in the authenticated workspace.</p><div className="mt-6 flex flex-wrap gap-3"><Link to="/app/intelligence" className="inline-flex items-center gap-2 rounded-xl bg-[#1A1F3C] px-4 py-2.5 text-sm font-medium text-[#FAFAF8]">Open Intelligence <ChevronLeft size={15} /></Link><Link to="/signup" className="inline-flex items-center rounded-xl border border-[#D4D1CB] px-4 py-2.5 text-sm font-medium">Get started</Link></div></div></div></div></AnimatedSection></section>
 
-      <footer className="border-t border-sn-100 py-10">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <Logo size={20} showWordmark />
-          <div className="text-sm" style={{ color: "#B8B4AC" }}>© 2026 SOPRANOVA</div>
-        </div>
-      </footer>
-    </div>
-  );
+<AnimatedSection className="mt-24 text-center" delay={160}><p className="sn-label mb-4 text-[#6B7FBF]">Build the loop</p><h2 className="sn-display mb-7 text-4xl md:text-5xl">Let the next decision arrive with context.</h2><Link to="/signup" className="inline-flex items-center gap-2 rounded-xl bg-[#1A1F3C] px-5 py-3 text-sm font-medium text-[#FAFAF8] transition hover:-translate-y-0.5 hover:bg-[#252B4A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B7FBF]">Experience Intelligence <ArrowUpRight size={16} /></Link></AnimatedSection></main><footer className="border-t border-[#E8E6E2] px-6 py-10 lg:px-10"><div className="mx-auto flex max-w-7xl items-center justify-between"><Logo size={20} showWordmark /><div className="text-xs text-[#B8B4AC]">© 2026 SOPRANOVA</div></div></footer></div>;
 }

@@ -2,6 +2,7 @@ import PublicNav from "../components/PublicNav";
 import AnimatedSection from "../components/AnimatedSection";
 import Logo from "../components/Logo";
 import { Link } from "react-router";
+import ExplainerVideo from "../components/ExplainerVideo";
 
 const values = [
   { title: "Clarity over complexity", desc: "We believe enterprise software has been needlessly complex for too long. Every design decision optimizes for understanding, not feature count." },
@@ -27,6 +28,12 @@ export default function About() {
           <p className="text-lg leading-relaxed mb-16" style={{ color: "#6B6660", maxWidth: "600px" }}>
             We built SOPRANOVA to close that gap. An intelligence operating system that sits above your entire enterprise — connecting data, reasoning about it, and surfacing the insights that matter.
           </p>
+        </AnimatedSection>
+
+        <AnimatedSection delay={80}>
+          <div className="mb-20">
+            <ExplainerVideo eyebrow="SOPRANOVA film" title="Make complex enterprise intelligence feel clear." description="A visual introduction to the product principle: connect context, show the reasoning, and make the next move understandable." />
+          </div>
         </AnimatedSection>
 
         {/* Values */}

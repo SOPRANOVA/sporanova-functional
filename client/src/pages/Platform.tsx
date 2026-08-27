@@ -1,110 +1,29 @@
+import { useState } from "react";
 import { Link } from "react-router";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import PublicNav from "../components/PublicNav";
 import AnimatedSection from "../components/AnimatedSection";
+import ExplainerVideo from "../components/ExplainerVideo";
 import Logo from "../components/Logo";
 
 const layers = [
-  { id: "01", label: "Data", title: "Universal Data Connectivity", desc: "Connect any data source — structured databases, unstructured documents, real-time streams, and external APIs. SOPRANOVA normalizes and semantically indexes everything into a unified enterprise knowledge graph.", color: "#4A7FA5" },
-  { id: "02", label: "Intelligence", title: "Reasoning & Analysis", desc: "A sophisticated reasoning layer that understands your business context, identifies patterns across disparate data sources, and generates actionable insights grounded in evidence.", color: "#5B6FA8" },
-  { id: "03", label: "Agents", title: "Autonomous AI Agents", desc: "Deploy specialized agents that monitor, analyze, and act within defined parameters. Each agent maintains context, learns from outcomes, and collaborates with the broader intelligence system.", color: "#6B7FBF" },
-  { id: "04", label: "Decisions", title: "Decision Intelligence", desc: "Transform insights into structured decisions with full evidence trails, stakeholder routing, and approval workflows. Every decision is traceable, auditable, and reversible.", color: "#8B8FC4" },
-  { id: "05", label: "Actions", title: "Intelligent Automation", desc: "Close the loop from insight to action. Trigger workflows, notify stakeholders, update systems, and measure outcomes — all within a unified, auditable automation layer.", color: "#4A8B8C" },
+  { id: "01", label: "Data", title: "Bring context together", desc: "Connect structured data, documents, memory, and configured sources so the workspace can reason from the context you choose.", color: "#4A7FA5", href: "/app/data" },
+  { id: "02", label: "Intelligence", title: "Turn context into understanding", desc: "Ask natural-language questions and keep the reasoning, evidence, and next step visible in one place.", color: "#5B6FA8", href: "/intelligence" },
+  { id: "03", label: "Agents", title: "Give intelligence a role", desc: "Configure specialized agents with purpose, procedures, guardrails, and a clear boundary for what they can do.", color: "#6B7FBF", href: "/agents" },
+  { id: "04", label: "Decisions", title: "Make the next move explicit", desc: "Transform insights into structured decisions with evidence trails, stakeholder routing, and an auditable state.", color: "#8B8FC4", href: "/app/decisions" },
+  { id: "05", label: "Actions", title: "Close the loop safely", desc: "Trigger reviewed workflows, notify stakeholders, and keep the outcome connected to the original context.", color: "#4A8B8C", href: "/app/operations" },
 ];
 
 export default function Platform() {
-  return (
-    <div className="min-h-screen bg-sn-white">
-      <PublicNav />
-      <div className="pt-32 pb-24 max-w-7xl mx-auto px-6">
-        <AnimatedSection>
-          <div className="sn-label mb-6">The Platform</div>
-          <h1 className="sn-display mb-6" style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", color: "#1A1F3C", maxWidth: "700px" }}>
-            One intelligent operating layer for your entire enterprise.
-          </h1>
-          <p className="text-lg leading-relaxed mb-16" style={{ color: "#6B6660", maxWidth: "560px" }}>
-            SOPRANOVA is not a tool. It is a platform — a continuous intelligence layer that sits above your data, your teams, and your systems, turning information into decisions at the speed of business.
-          </p>
-        </AnimatedSection>
+  const [activeLayer, setActiveLayer] = useState(0);
+  const layer = layers[activeLayer];
+  return <div className="min-h-screen bg-[#FAFAF8] text-[#1A1F3C]"><PublicNav /><main className="mx-auto max-w-7xl px-6 pb-24 pt-32 lg:px-10"><AnimatedSection animation="slide-up"><div className="grid gap-12 lg:grid-cols-[1fr_.8fr] lg:items-end"><div><p className="sn-label mb-6 text-[#6B7FBF]">The platform</p><h1 className="sn-display max-w-3xl text-5xl leading-[.98] md:text-7xl">One intelligent operating layer for your entire enterprise.</h1><p className="mt-8 max-w-xl text-lg leading-relaxed text-[#6B6660]">SOPRANOVA connects context, intelligence, agents, decisions, and action into one continuous loop your team can understand and operate.</p></div><div className="border-t border-[#E8E6E2] pt-5 lg:mb-1"><p className="sn-label">The idea in one line</p><p className="mt-4 text-xl leading-relaxed text-[#6B6660]">Information becomes more useful when the next move is visible.</p></div></div></AnimatedSection>
 
-        {/* Platform diagram */}
-        <AnimatedSection className="mb-24" delay={100}>
-          <div className="rounded-3xl p-10 md:p-16 relative overflow-hidden" style={{ background: "#1A1F3C" }}>
-            <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(107,127,191,0.12) 0%, transparent 65%)" }} />
-            <div className="relative">
-              <div className="sn-label mb-8" style={{ color: "rgba(248,246,242,0.4)" }}>Intelligence flow</div>
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                {["Data", "Intelligence", "Agents", "Decisions", "Actions"].map((step, i) => (
-                  <div key={step} className="flex items-center gap-4">
-                    <div className="text-center">
-                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-2 mx-auto"
-                        style={{ background: `rgba(107,127,191,${0.12 + i * 0.06})`, border: "1px solid rgba(107,127,191,0.2)" }}>
-                        <span className="text-xs font-semibold" style={{ color: "rgba(248,246,242,0.8)" }}>0{i + 1}</span>
-                      </div>
-                      <div className="text-sm font-medium" style={{ color: "#F8F6F2" }}>{step}</div>
-                    </div>
-                    {i < 4 && (
-                      <div className="hidden md:block w-8 h-px" style={{ background: "rgba(107,127,191,0.35)" }}>
-                        <div className="w-full h-full flex items-center justify-end">
-                          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "rgba(107,127,191,0.6)" }} />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </AnimatedSection>
+<section className="mt-20"><AnimatedSection animation="scale" delay={120}><ExplainerVideo eyebrow="Platform film" title="See the system behind the signal." description="A visual explanation of how connected context becomes a governed operating layer for decisions and action." /></AnimatedSection></section>
 
-        {/* Layers */}
-        <div className="space-y-5">
-          {layers.map((layer, i) => (
-            <AnimatedSection key={layer.id} delay={i * 60}>
-              <div className="rounded-2xl p-8 border transition-all duration-300" style={{ background: "#FAFAF8", borderColor: "#E8E6E2" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = layer.color + "40"; (e.currentTarget as HTMLDivElement).style.transform = "translateX(4px)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "#E8E6E2"; (e.currentTarget as HTMLDivElement).style.transform = ""; }}>
-                <div className="flex flex-col md:flex-row gap-8">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: layer.color + "15" }}>
-                      <span className="text-xs font-semibold" style={{ color: layer.color }}>{layer.id}</span>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="sn-label mb-2" style={{ color: layer.color }}>{layer.label}</div>
-                    <h3 className="text-xl font-medium mb-3" style={{ color: "#1A1F3C" }}>{layer.title}</h3>
-                    <p className="text-sm leading-relaxed" style={{ color: "#6B6660", maxWidth: "600px" }}>{layer.desc}</p>
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
+<section className="mt-24"><AnimatedSection animation="fade"><div className="mb-10 flex flex-wrap items-end justify-between gap-6"><div><p className="sn-label mb-4 text-[#6B7FBF]">Five connected layers</p><h2 className="sn-display text-4xl md:text-5xl">The platform reveals its logic.</h2></div><p className="max-w-sm text-sm leading-relaxed text-[#8C887F]">Select a layer to see its job. The experience stays simple while the system underneath stays rigorous.</p></div></AnimatedSection><div className="grid gap-4 lg:grid-cols-[.85fr_1.15fr]"><div className="border-t border-[#E8E6E2]">{layers.map((item, index) => { const active = activeLayer === index; return <button key={item.id} type="button" onClick={() => setActiveLayer(index)} className={`flex w-full items-center gap-4 border-b border-dashed border-[#D9D5CE] px-3 py-5 text-right transition ${active ? "bg-[#F0EFF8]" : "hover:bg-white"}`}><span className="text-sm font-semibold" style={{ color: active ? item.color : "#B8B4AC" }}>{item.id}</span><span className="flex-1"><span className={`block text-sm font-medium ${active ? "text-[#1A1F3C]" : "text-[#6B6660]"}`}>{item.label}</span><span className="mt-1 block text-xs text-[#8C887F]">{item.title}</span></span><ArrowRight size={16} className={active ? "text-[#6B7FBF]" : "text-[#D4D1CB]"} /></button>; })}</div><div className="relative min-h-[24rem] overflow-hidden rounded-[1.75rem] border border-[#E8E6E2] bg-white p-7"><div className="absolute right-[-3rem] top-[-4rem] h-56 w-56 rounded-full border border-[#6B7FBF]/10" /><div className="absolute right-[-1rem] top-[-2rem] h-40 w-40 rounded-full border border-[#4A8B8C]/10" /><div className="relative flex h-full flex-col justify-between"><div><div className="flex items-center justify-between"><span className="sn-label" style={{ color: layer.color }}>{layer.id} / {layer.label}</span><span className="flex items-center gap-1.5 text-xs text-[#4A8B8C]"><CheckCircle2 size={14} />Connected logic</span></div><h3 className="mt-12 max-w-md font-[Inter] text-3xl font-medium leading-tight">{layer.title}</h3><p className="mt-4 max-w-lg text-base leading-relaxed text-[#6B6660]">{layer.desc}</p></div><div className="mt-12 flex flex-wrap items-center gap-4"><Link to={layer.href} className="inline-flex items-center gap-2 rounded-xl bg-[#1A1F3C] px-4 py-2.5 text-sm font-medium text-[#FAFAF8] transition hover:-translate-y-0.5 hover:bg-[#252B4A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B7FBF]">Explore {layer.label} <ArrowRight size={15} /></Link><span className="text-xs text-[#B8B4AC]">Layer {activeLayer + 1} of {layers.length}</span></div></div></div></div></section>
 
-        {/* CTA */}
-        <AnimatedSection className="mt-20 text-center" delay={200}>
-          <div className="sn-label mb-4">Begin with SOPRANOVA</div>
-          <h2 className="sn-display mb-6" style={{ fontSize: "2rem", color: "#1A1F3C" }}>Ready to see it in action?</h2>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link to="/signup" className="px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300"
-              style={{ background: "#1A1F3C", color: "#FAFAF8" }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "#252B4A"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "#1A1F3C"; e.currentTarget.style.transform = ""; }}>
-              Get Started
-            </Link>
-            <Link to="/contact" className="px-6 py-3 rounded-xl text-sm font-medium border transition-all duration-300"
-              style={{ borderColor: "#D4D1CB", color: "#1A1F3C" }}>
-              Request Demo
-            </Link>
-          </div>
-        </AnimatedSection>
-      </div>
+<section className="mt-24 border-y border-[#E8E6E2] py-20"><div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-center"><div><p className="sn-label mb-4 text-[#6B7FBF]">Built for the full loop</p><h2 className="sn-display text-4xl leading-tight md:text-5xl">Connect once. See more. Act with context.</h2></div><div className="grid gap-2 sm:grid-cols-3"><div className="bg-[#F4F3F0] p-5"><p className="sn-label">Context</p><p className="mt-5 text-sm leading-relaxed text-[#6B6660]">Sources, documents, and memory stay close to the question.</p></div><div className="bg-[#F4F3F0] p-5"><p className="sn-label">Clarity</p><p className="mt-5 text-sm leading-relaxed text-[#6B6660]">Evidence, reasoning, and decisions share one trail.</p></div><div className="bg-[#F4F3F0] p-5"><p className="sn-label">Control</p><p className="mt-5 text-sm leading-relaxed text-[#6B6660]">Actions operate inside the rules your workspace defines.</p></div></div></div></section>
 
-      <footer className="border-t border-sn-100 py-10">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <Logo size={20} showWordmark />
-          <div className="text-sm" style={{ color: "#B8B4AC" }}>© 2026 SOPRANOVA</div>
-        </div>
-      </footer>
-    </div>
-  );
+<AnimatedSection className="mt-24 text-center" delay={160}><p className="sn-label mb-4 text-[#6B7FBF]">Begin with SOPRANOVA</p><h2 className="sn-display mb-7 text-4xl md:text-5xl">Ready to see the operating layer?</h2><div className="flex flex-wrap justify-center gap-3"><Link to="/signup" className="rounded-xl bg-[#1A1F3C] px-5 py-3 text-sm font-medium text-[#FAFAF8] transition hover:-translate-y-0.5 hover:bg-[#252B4A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B7FBF]">Get started</Link><Link to="/contact" className="rounded-xl border border-[#D4D1CB] px-5 py-3 text-sm font-medium transition hover:-translate-y-0.5 hover:border-[#1A1F3C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B7FBF]">Request a demo</Link></div></AnimatedSection></main><footer className="border-t border-[#E8E6E2] px-6 py-10 lg:px-10"><div className="mx-auto flex max-w-7xl items-center justify-between"><Logo size={20} showWordmark /><div className="text-xs text-[#B8B4AC]">© 2026 SOPRANOVA</div></div></footer></div>;
 }

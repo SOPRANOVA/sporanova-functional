@@ -1,6 +1,9 @@
+import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router";
 import PublicNav from "../components/PublicNav";
 import AnimatedSection from "../components/AnimatedSection";
+import ExplainerVideo from "../components/ExplainerVideo";
 import Logo from "../components/Logo";
 
 const solutions = [
@@ -11,67 +14,13 @@ const solutions = [
 ];
 
 export default function Solutions() {
-  return (
-    <div className="min-h-screen bg-sn-white">
-      <PublicNav />
-      <div className="pt-32 pb-24 max-w-7xl mx-auto px-6">
-        <AnimatedSection>
-          <div className="sn-label mb-6">Solutions</div>
-          <h1 className="sn-display mb-6" style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", color: "#1A1F3C", maxWidth: "700px" }}>
-            Built for every enterprise,<br />
-            <span style={{ color: "#6B7FBF" }}>configured for yours.</span>
-          </h1>
-          <p className="text-lg leading-relaxed mb-16" style={{ color: "#6B6660", maxWidth: "560px" }}>
-            SOPRANOVA adapts to your industry, your data, and your intelligence needs. Our modular platform deploys rapidly and scales without friction.
-          </p>
-        </AnimatedSection>
+  const [activeSolution, setActiveSolution] = useState(0);
+  const solution = solutions[activeSolution];
+  return <div className="min-h-screen bg-[#FAFAF8] text-[#1A1F3C]"><PublicNav /><main className="mx-auto max-w-7xl px-6 pb-24 pt-32 lg:px-10"><AnimatedSection animation="slide-up"><div className="grid gap-12 lg:grid-cols-[1fr_.8fr] lg:items-end"><div><p className="sn-label mb-6 text-[#6B7FBF]">Solutions</p><h1 className="sn-display max-w-3xl text-5xl leading-[.98] md:text-7xl">Built for every enterprise, <span className="text-[#6B7FBF]">configured for yours.</span></h1><p className="mt-8 max-w-xl text-lg leading-relaxed text-[#6B6660]">SOPRANOVA adapts to your industry, your data, and your intelligence needs without forcing your operating context into a generic workflow.</p></div><div className="border-t border-[#E8E6E2] pt-5"><p className="sn-label">The design principle</p><p className="mt-4 text-xl leading-relaxed text-[#6B6660]">The same intelligence loop, shaped around the work you actually do.</p></div></div></AnimatedSection>
 
-        <div className="space-y-6">
-          {solutions.map((s, i) => (
-            <AnimatedSection key={s.label} delay={i * 60}>
-              <div className="rounded-2xl p-8 border" style={{ background: "#FAFAF8", borderColor: "#E8E6E2" }}>
-                <div className="flex flex-col lg:flex-row gap-8">
-                  <div className="lg:flex-1">
-                    <div className="sn-label mb-3">{s.label}</div>
-                    <h3 className="text-xl font-medium mb-3" style={{ color: "#1A1F3C" }}>{s.title}</h3>
-                    <p className="text-sm leading-relaxed" style={{ color: "#6B6660" }}>{s.desc}</p>
-                  </div>
-                  <div className="lg:w-72 flex-shrink-0">
-                    <div className="sn-label mb-3">Use Cases</div>
-                    <div className="space-y-2">
-                      {s.useCases.map((uc) => (
-                        <div key={uc} className="flex items-center gap-2 text-sm" style={{ color: "#6B6660" }}>
-                          <div className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: "#6B7FBF" }} />
-                          {uc}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
+<section className="mt-20"><AnimatedSection animation="scale" delay={100}><ExplainerVideo eyebrow="Solutions film" title="Start with the context your industry already has." description="A visual walkthrough of how one operating layer can adapt to different enterprise environments and use cases." /></AnimatedSection></section>
 
-        <AnimatedSection className="mt-16 text-center" delay={200}>
-          <div className="sn-label mb-4">Your industry, your terms</div>
-          <h2 className="sn-display mb-6" style={{ fontSize: "2rem", color: "#1A1F3C" }}>Don't see your sector?</h2>
-          <p className="text-sm mb-8" style={{ color: "#6B6660" }}>SOPRANOVA deploys across any enterprise context. Talk to our team about your specific requirements.</p>
-          <Link to="/contact" className="px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300"
-            style={{ background: "#1A1F3C", color: "#FAFAF8" }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "#252B4A"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "#1A1F3C"; e.currentTarget.style.transform = ""; }}>
-            Talk to Our Team
-          </Link>
-        </AnimatedSection>
-      </div>
+<section className="mt-24"><AnimatedSection animation="fade"><div className="mb-10 flex flex-wrap items-end justify-between gap-6"><div><p className="sn-label mb-4 text-[#6B7FBF]">Explore by context</p><h2 className="sn-display text-4xl md:text-5xl">Choose a starting point.</h2></div><p className="max-w-sm text-sm leading-relaxed text-[#8C887F]">The interface changes with the question, while the underlying loop stays consistent.</p></div></AnimatedSection><div className="grid gap-4 lg:grid-cols-[.8fr_1.2fr]"><div className="border-t border-[#E8E6E2]">{solutions.map((item, index) => <button key={item.label} type="button" onClick={() => setActiveSolution(index)} className={`flex w-full items-center gap-4 border-b border-dashed border-[#D9D5CE] px-3 py-5 text-right transition ${activeSolution === index ? "bg-[#F0EFF8]" : "hover:bg-white"}`}><span className="text-sm font-semibold text-[#B8B4AC]">0{index + 1}</span><span className={`flex-1 text-sm font-medium ${activeSolution === index ? "text-[#1A1F3C]" : "text-[#6B6660]"}`}>{item.label}</span><ArrowRight size={15} className={activeSolution === index ? "text-[#6B7FBF]" : "text-[#D4D1CB]"} /></button>)}</div><div className="min-h-[25rem] rounded-[1.75rem] border border-[#E8E6E2] bg-white p-7 md:p-9"><div className="flex items-center justify-between"><span className="sn-label text-[#6B7FBF]">0{activeSolution + 1} / {solution.label}</span><span className="text-xs text-[#B8B4AC]">Configured starting point</span></div><h3 className="mt-12 max-w-xl font-[Inter] text-3xl font-medium leading-tight">{solution.title}</h3><p className="mt-4 max-w-xl text-base leading-relaxed text-[#6B6660]">{solution.desc}</p><div className="mt-10"><p className="sn-label mb-4">Common starting questions</p><div className="grid gap-3 sm:grid-cols-2">{solution.useCases.map(useCase => <div key={useCase} className="flex items-center gap-2 bg-[#F4F3F0] px-4 py-3 text-sm text-[#6B6660]"><span className="h-1.5 w-1.5 rounded-full bg-[#6B7FBF]" />{useCase}</div>)}</div></div></div></div></section>
 
-      <footer className="border-t border-sn-100 py-10">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <Logo size={20} showWordmark />
-          <div className="text-sm" style={{ color: "#B8B4AC" }}>© 2026 SOPRANOVA</div>
-        </div>
-      </footer>
-    </div>
-  );
+<AnimatedSection className="mt-24 text-center" delay={180}><p className="sn-label mb-4 text-[#6B7FBF]">Your industry, your terms</p><h2 className="sn-display mb-6 text-4xl md:text-5xl">Bring us the context we have not mapped yet.</h2><p className="mx-auto mb-8 max-w-lg text-sm leading-relaxed text-[#6B6660]">SOPRANOVA is designed to adapt to the data, workflows, and decisions that make your organization distinct.</p><Link to="/contact" className="inline-flex items-center gap-2 rounded-xl bg-[#1A1F3C] px-5 py-3 text-sm font-medium text-[#FAFAF8] transition hover:-translate-y-0.5 hover:bg-[#252B4A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B7FBF]">Talk to our team <ArrowRight size={15} /></Link></AnimatedSection></main><footer className="border-t border-[#E8E6E2] px-6 py-10 lg:px-10"><div className="mx-auto flex max-w-7xl items-center justify-between"><Logo size={20} showWordmark /><div className="text-xs text-[#B8B4AC]">© 2026 SOPRANOVA</div></div></footer></div>;
 }

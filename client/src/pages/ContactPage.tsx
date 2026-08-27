@@ -74,19 +74,19 @@ export default function Contact() {
                   <label className="sn-label block mb-1.5">Full Name</label>
                   <input type="text" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
                     onFocus={() => setFocused("name")} onBlur={() => setFocused(null)}
-                    placeholder="Sarah Reeves" style={inputStyle("name")} />
+                    placeholder="Your name" style={inputStyle("name")} />
                 </div>
                 <div>
                   <label className="sn-label block mb-1.5">Work Email</label>
                   <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
                     onFocus={() => setFocused("email")} onBlur={() => setFocused(null)}
-                    placeholder="sarah@company.com" style={inputStyle("email")} />
+                    placeholder="you@company.com" style={inputStyle("email")} />
                 </div>
                 <div>
                   <label className="sn-label block mb-1.5">Company</label>
                   <input type="text" required value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })}
                     onFocus={() => setFocused("company")} onBlur={() => setFocused(null)}
-                    placeholder="Meridian Financial" style={inputStyle("company")} />
+                    placeholder="Your company" style={inputStyle("company")} />
                 </div>
                 <div>
                   <label className="sn-label block mb-1.5">Message</label>
